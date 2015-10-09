@@ -1,0 +1,15 @@
+= Mule Cookbook REST Server
+
+This is a basic REST Jersey Server that exposes 3 resources.
+
+* /oauth:
++
+This resource handles the server http://oauth.net/2/[OAuthV2] dance
++
+* /ingredient:
++
+To handle CRUD operations for Ingredient resource.
++
+* /recipe:
++
+To handle CRUD operations for Recipe resource.
