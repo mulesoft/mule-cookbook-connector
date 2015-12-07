@@ -1,43 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <groupId>com.cookbook.tutorial</groupId>
-    <artifactId>mule-cookbook-service</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.mule.modules</groupId>
+	<artifactId>cookbook-connector</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>mule-module</packaging>
+	<name>Anypoint Cookbook Connector</name>
 
-    <modules>
-        <module>mule-cookbook-parent</module>
-        <module>model</module>
-        <module>webservice</module>
-        <module>soap-server</module>
-        <module>mule-cookbook-server</module>
-        <module>sdk-client</module>
-        <module>rest-server</module>
-        <module>cookbook-connector</module>
-    </modules>
+	<parent>
+		<groupId>org.mule.tools.devkit</groupId>
+		<artifactId>mule-devkit-parent</artifactId>
+		<version>3.7.2</version>
+	</parent>
 
-    <scm>
-        <connection>scm:git:git://github.com:mulesoft/mule-cookbook.git
-        </connection>
-        <developerConnection>
-            scm:git:git@github.com:mulesoft/mule-cookbook.git
-        </developerConnection>
-        <url>http://github.com/mulesoft/mule-cookbook</url>
-    </scm>
+	<properties>
+		<category>Community</category>
+		<licensePath>LICENSE.md</licensePath>
+		<devkit.studio.package.skip>false</devkit.studio.package.skip>
+	</properties>
 
-    <distributionManagement>
-        <repository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Release Repository</name>
-            <url>http://repository-master.mulesoft.org/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>mulesoft-snapshots</id>
-            <name>MuleSoft Snapshot Repository</name>
-            <url>http://repository-master.mulesoft.org/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
+	<dependencies>
+		<dependency>
+			<groupId>com.cookbook.tutorial</groupId>
+			<artifactId>sdk-client</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>http://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>mulesoft-snapshots</id>
+			<name>MuleSoft Snapshots Repository</name>
+			<url>http://repository.mulesoft.org/snapshots/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Repository</name>
+			<url>http://repository-master.mulesoft.org/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>mulesoft-snapshots</id>
+			<name>MuleSoft Snapshot Repository</name>
+			<url>http://repository-master.mulesoft.org/snapshots/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:git:git://github.com:mulesoft/cookbook-connector.git</connection>
+		<developerConnection>scm:git:git@github.com:mulesoft/cookbook-connector.git</developerConnection>
+		<url>http://github.com/mulesoft/cookbook-connector</url>
+	</scm>
 </project>
