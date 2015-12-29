@@ -23,7 +23,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.cookbook.tutorial</groupId>
+			<groupId>org.mule.modules</groupId>
 			<artifactId>sdk-client</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
