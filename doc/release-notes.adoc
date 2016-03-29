@@ -1,34 +1,15 @@
 = Cookbook Connector Release Notes
+:keywords: anypoint studio, esb, connector, endpoint, cookbook
+
+*_Community_*
 
 Anypoint™ Connector for Cookbook Service provides the ability to save and query recipes.
 This connector is intended to help newbie's learn and develop SDK based Connectors using Devkit.
 
-== References:
+*Connector Guide*: link:/mule-user-guide/v/3.7/cookbook-connector[Cookbook Connector]
 
-- System name: Cookbook Connector
+=== Version 1.0.0 Compatibility
 
-- Release date: XX-Oct-2015
-
-- Connector version: 1.0.0
-
-- Connector guide URL: http://www.mulesoft.org/documentation/display/current/Cookbook+Connector
-
-- Supported Mule version: 3.6.0 and higher
-
-== Cookbook Connector Release Notes
-=== XX-Oct-2015
-
-=== Contents
-
-- Compatibility
-- Features
-- Fixed in this Release
-- Known Issues
-- Support Resources
-
-Release Notes for version 1.0.0 of the Cookbook Connector. These Release Notes accompany the http://www.mulesoft.org/documentation/display/current/Cookbook+Connector[Cookbook Connector Guide].
-
-=== Compatibility
 The Cookbook Connector is compatible with:
 
 |===
@@ -39,16 +20,21 @@ The Cookbook Connector is compatible with:
 |Anypoint Studio|5.2 or higher
 |===
 
-=== Features
+=== Version 1.0.0 Features
 
 - Supports OAuth 2.0 and Username/Password based Configuration.
 - Supports Query Pagination and also acts an Inbound endpoint to poll the result.
 - Supports DataSense and improved exception handling.
 
-=== Known Issues
+=== Version 1.0.0 Fixed in this Release
 
 None.
 
-=== Support Resources
+=== Version 1.0.0 Known Issues
 
-- To learn how you can use the features provided by Devkit refer to link:http://mulesoft.github.io/mule-cookbook-tutorial/[Mule Cookbook Tutorial]
+None.
+
+=== See Also
+
+* To learn how you can use the features provided by Devkit refer to link:http://mulesoft.github.io/mule-cookbook-tutorial/[Mule Cookbook Tutorial]
+* Learn how to link:/mule-fundamentals/v/3.7/anypoint-exchange[Install Anypoint Connectors] using Anypoint Exchange.

@@ -1,8 +1,15 @@
 /**
- * (c) 2003-2015 MuleSoft, Inc. The software in this package is
+ * (c) 2003-2016 MuleSoft, Inc. The software in this package is
+ * published under the terms of the CPAL v1.0 license, a copy of which
+ * has been included with this distribution in the LICENSE.md file.
+
+ */
+/**
+ * (c) 2003-2016 MuleSoft, Inc. The software in this package is
  * published under the terms of the CPAL v1.0 license, a copy of which
  * has been included with this distribution in the LICENSE.md file.
  */
+
 package org.mule.modules.cookbook.automation.unit;
 
 import com.cookbook.tutorial.client.MuleCookBookClient;
@@ -39,7 +46,8 @@ public class CookbookConnectorTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.connector = new CookbookConnector();
-        this.randomString = String.format("qaTest%s", new Object[]{UUID.randomUUID().toString().substring(0, 7)});
+        this.randomString = String.format("qaTest%s", new Object[] { UUID.randomUUID().toString().substring(0, 7)
+        });
 
         Config config = new Config();
         config.setClient(client);
@@ -118,7 +126,8 @@ public class CookbookConnectorTest {
         try {
             final List<CookBookEntity> entities = Arrays.asList(new CookBookEntity[10]);
             when(client.searchWithQuery(anyString(), anyInt(), anyInt())).thenReturn(entities);
-            final ProviderAwarePagingDelegate<Map<String, Object>, CookbookConnector> pagingDelegate = connector.queryPaginated("GET ALL FROM INGREDIENT", new PagingConfiguration(10));
+            final ProviderAwarePagingDelegate<Map<String, Object>, CookbookConnector> pagingDelegate = connector.queryPaginated("GET ALL FROM INGREDIENT", new PagingConfiguration(
+                    10));
             assertEquals(pagingDelegate.getPage(connector).size(), entities.size());
         } catch (Exception e) {
             fail(e.getMessage());
