@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 @MetaDataCategory
 public class DataSenseResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSenseResolver.class);
 
     @Inject
     private CookbookConnector connector;
@@ -113,13 +113,13 @@ public class DataSenseResolver {
                             addFields(desc, innerObject);
                         }
                     } catch (InvalidTokenException e) {
-                        LOGGER.error(e.getMessage(), e);
+                        logger.error(e.getMessage(), e);
                     } catch (InvalidEntityException e) {
-                        LOGGER.error(e.getMessage(), e);
+                        logger.error(e.getMessage(), e);
                     } catch (NoSuchEntityException e) {
-                        LOGGER.error(e.getMessage(), e);
+                        logger.error(e.getMessage(), e);
                     } catch (SessionExpiredException e) {
-                        LOGGER.error(e.getMessage(), e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
                 break;
