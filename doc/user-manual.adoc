@@ -1,6 +1,6 @@
 = Cookbook Connector User Guide
 :keywords: anypoint studio, esb, connector, endpoint, cookbook
-:imagesdir: ./images
+:imagesdir: ./_images
 
 _Community_
 
