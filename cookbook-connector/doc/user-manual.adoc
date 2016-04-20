@@ -39,15 +39,15 @@ The connector requires the following dependencies:
 
 == Installing and Configuring
 
-The Cookbook connector is a sample connector developed to be useful as both learning tool and a skeleton connector. The connector will guide you to develop SDK based connector's using the features provided by Anypoint Devkit framework and should not be used in Production environments.
+The Cookbook connector is a sample connector developed as both a learning tool and a skeleton connector. The connector helps you develop SDK-based connectors using the features provided by the link:/anypoint-connector-devkit/v/3.8/index[Anypoint Connector DevKit] framework and should not be used in Production environments.
 
 === Installing
 
-To install Cookbook connector in Anypoint Studio, follow the steps below:
+To install the Cookbook connector in Anypoint Studio, follow the steps below:
 
-* Open Anypoint Studio and got to **Help -> Install New Software**.
+* Open Anypoint Studio and got to *Help* > *Install New Software*.
 * Select *Anypoint Connectors Update Site - http://repository.mulesoft.org/connectors/releases/3.5.0*.
-* Locate the Cookbook Connector.
+* Locate the Cookbook connector.
 
 [.center.text-center]
 image:cookbook_install_updatesite.png["Anypoint Studio Install Window"]
@@ -162,6 +162,7 @@ The Connector supports the following operations.
 * RecipeToMap
 
 === Adding to a Flow
+
 * Create a new *Mule Project* in Anypoint Studio.
 * Add a suitable Mule *Inbound Endpoint*, such as the HTTP listener or File endpoint, to begin the flow.
 * Drag & drop the *Cookbook Connector* onto the canvas.
@@ -176,10 +177,10 @@ image:cookbook_usecase_settings.png[Flow Settings]
 |===
 |Field|Description
 |`Display Name`|Enter a unique label for the connector in your application.
-2+|`*BASIC SETTINGS*`
+2+|*BASIC SETTINGS*
 |`Connector Configuration`|Connect to a global element linked to this connector. Global elements encapsulate reusable data about the connection to the target resource or service. Select the global Cookbook connector element that you just created.
-|`Operation`|Select `*Create*` from the drop-down menu.
-2+|`*GENERAL*`
+|`Operation`|Select *Create* from the drop-down menu.
+2+|*GENERAL*
 |`Type`|Select the type of the entity you want to work with. If you have provided the credentials earlier, the connector would automatically fetch the metadata.
 |`Entity Reference`|Provide the entity object that you would like to create.
 |===
@@ -191,13 +192,13 @@ The most common use cases for the Cookbook connector are listed below:
 
 [options="autowidth"]
 |===
-|`*CRUD*`|Create, Get, Update, and Delete the recipes and ingredients from the repository.
-|`*Get Recently Added*`|Retrieves the complete recipe along with ingredients, and directions to prepare the recipe of a recently added, if exists in the repository.
+|*CRUD*|Create, Get, Update, and Delete the recipes and ingredients from the repository.
+|*Get Recently Added*|Retrieves the complete recipe along with ingredients, and directions to prepare the recipe of a recently added, if exists in the repository.
 |===
 
 == Example Use Case
 
-Retrieve recently added recipe from the repository.
+Retrieve a recently added recipe from the repository.
 
 [.center.text-center]
 image:cookbook_usecase_flow.png[Get recently added recipe flow]
@@ -205,20 +206,20 @@ image:cookbook_usecase_flow.png[Get recently added recipe flow]
 === Anypoint Studio Visual Editor | XML Editor
 
 * Create a new **Mule Project** in Anypoint Studio.
-* Edit the `**mule-app.properties**` file placed under `**src\main\app**` folder to hold your Cookbook credentials.
+* Edit the `mule-app.properties` file placed under `src\main\app` folder to hold your Cookbook credentials.
 
 ```
 mule.cookbook.username=<USERNAME>
 mule.cookbook.password=<PASSWORD>
 ```
-* Drag a **HTTP endpoint** into the canvas and configure the following parameters:
+* Drag an **HTTP endpoint** onto the canvas and configure the following parameters:
 
 [options="header,autowidth"]
 |===
 |Parameter|Value
 |`Display Name`|/HTTP
-|`Connector Configuration`| If no HTTP element has been created yet, click the plus sign to add a new **HTTP Listener Configuration** and click **OK** (leave the values to its defaults).
-|`Path`|/getrecentlyadded
+|`Connector Configuration`| If no HTTP element has been created yet, click the green plus sign to add a new **HTTP Listener Configuration** and click **OK** (leave the values to its defaults).
+|`Path`|`/getrecentlyadded`
 |`Username`|`${mule.cookbook.username}`
 |`Password`|`${mule.cookbook.password}`
 |===
@@ -259,12 +260,13 @@ Then, your XML should look like:
 |===
 
 * Save and **run** the project as a Mule Application.
-* Open a web browser and hit the URL `**http://localhost:8081/getrecentlyadded**`. If your Cookbook repository has any recently added recipe, the you should see the XML with the recipe, Otherwise empty.
+* Open a web browser and hit the URL `http://localhost:8081/getrecentlyadded`. If your Cookbook repository has any recently added recipe, the you should see the XML with the recipe.
 
 
-=== Code Example
+=== Example Use Case Code
 
-```xml
+[source,xml,linenums]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:cookbook="http://www.mulesoft.org/schema/mule/cookbook" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
@@ -284,8 +286,7 @@ http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/
         <logger message="#[payload]" level="INFO" doc:name="Log the recipe"/>
     </flow>
 </mule>
-
-```
+----
 
 === Demo
 
