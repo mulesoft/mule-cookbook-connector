@@ -1,8 +1,8 @@
 = Mule Cookbook Tutorial
 
-*Cookbook* is a service that helps users organize ingredients and recipes, so users can easily maintain recipes for the foods they like to prepare.
+*Cookbook* is a service that helps users organize ingredients and recipes, so they can easily maintain and access recipes for the dishes they like to prepare.
 
-The purpose of this service is to help you learn the features provided by Anypoint Connector DevKit and to provide guidelines for connector development using DevKit.
+The purpose of this tutorial is to help you learn the features provided by Anypoint Connector DevKit and to guide you in connector development using DevKit.
 
 This project contains various client modules that expose the Cookbook service, which
 can be used as reference for development of SOAP, REST, or Java SDK-based Connectors.
