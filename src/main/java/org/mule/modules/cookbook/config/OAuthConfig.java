@@ -19,11 +19,22 @@ import com.cookbook.tutorial.client.MuleCookBookClient;
 @OAuth2(configElementName = "oauth2", friendlyName = "OAuth 2.0", authorizationUrl = "http://devkit-cookbook.cloudhub.io/rest/oauth/authorize", accessTokenUrl = "http://devkit-cookbook.cloudhub.io/rest/oauth/accessToken")
 public class OAuthConfig extends AbstractConfig {
 
+    /**
+     * An access token associated with this instance.
+     */
     @OAuthAccessToken
     private String accessToken;
+
+    /**
+     * Your application's client identifier - OAuth consumer key
+     */
     @Configurable
     @OAuthConsumerKey
     private String consumerKey;
+
+    /**
+     * Your application's client secret - OAuth consumer secret
+     */
     @Configurable
     @OAuthConsumerSecret
     private String consumerSecret;
