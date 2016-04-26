@@ -9,19 +9,20 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 import org.mule.modules.cookbook.CookbookConnector;
 import org.mule.modules.cookbook.automation.functional.*;
 import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SuiteClasses({
         CreateTestCases.class,
         DeleteTestCases.class,
         GetRecentlyAddedTestCases.class,
         GetTestCases.class,
         QueryPaginatedTestCases.class,
         UpdateTestCases.class,
-        CookbookMetaDataTestCases.class,
+        DataSenseResolverMetaDataTestCases.class,
         GetRecentlyAddedSourceTestCases.class
 })
 public class FunctionalTestSuite {

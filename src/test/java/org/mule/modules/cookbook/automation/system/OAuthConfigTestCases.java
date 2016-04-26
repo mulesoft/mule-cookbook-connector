@@ -6,6 +6,7 @@
 package org.mule.modules.cookbook.automation.system;
 
 import com.cookbook.tutorial.service.InvalidTokenException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.config.OAuthConfig;
@@ -16,7 +17,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class OAuthConfigSystemTestCases {
+public class OAuthConfigTestCases {
 
     private Properties validCredentials;
     private OAuthConfig config;
@@ -33,7 +34,7 @@ public class OAuthConfigSystemTestCases {
     }
 
     @Test
-    public void validCredentialsConnectivityTest() {
+    public void validCredentialsTest() {
         try {
             config.testConnect();
         } catch (Exception e) {
@@ -42,7 +43,7 @@ public class OAuthConfigSystemTestCases {
     }
 
     @Test
-    public void invalidCredentialsConnectivityTest() {
+    public void invalidCredentialsTest() {
         try {
             config.setAccessToken("");
             config.postAuthorize();

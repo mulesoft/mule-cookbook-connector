@@ -12,11 +12,12 @@
 	<parent>
 		<groupId>org.mule.tools.devkit</groupId>
 		<artifactId>mule-devkit-parent</artifactId>
-		<version>3.8.1</version>
+		<version>3.8.2</version>
 	</parent>
 
 	<properties>
 		<category>Community</category>
+		<jdk.version>1.7</jdk.version>
 		<licensePath>LICENSE.md</licensePath>
 		<mule.cookbook.version>1.0.0</mule.cookbook.version>
 		<devkit.studio.package.skip>false</devkit.studio.package.skip>
@@ -28,10 +29,25 @@
 			<artifactId>sdk-client</artifactId>
 			<version>${mule.cookbook.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.intellij</groupId>
+			<artifactId>annotations</artifactId>
+			<version>12.0</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.mule.certification</groupId>
 				<artifactId>project-structure-validation</artifactId>
@@ -47,6 +63,21 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>http://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>mulesoft-snapshots</id>
+			<name>MuleSoft Snapshots Repository</name>
+			<url>http://repository.mulesoft.org/snapshots/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
 
 	<distributionManagement>
 		<repository>

@@ -9,6 +9,8 @@ import com.cookbook.tutorial.client.ICookbookCallback;
 import com.cookbook.tutorial.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.jetbrains.annotations.NotNull;
 import org.mule.api.annotations.*;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.oauth.OAuthProtected;
@@ -64,7 +66,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Source(sourceStrategy = SourceStrategy.POLLING, pollingPeriod = 10000)
-    public void getRecentlyAddedSource(final SourceCallback callback) throws Exception {
+    public void getRecentlyAddedSource(@NotNull final SourceCallback callback) throws Exception {
 
         if (this.getConfig().getClient() != null) {
             // Every 5 seconds our callback will be executed
@@ -99,8 +101,8 @@ public class CookbookConnector {
     @Processor
     @OnException(handler = CookbookHandler.class)
     @SuppressWarnings("unchecked")
-    public Map<String, Object> create(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String type, @Default("#[payload]") @RefOnly Map<String, Object> entity)
-            throws InvalidEntityException, SessionExpiredException {
+    public Map<String, Object> create(@NotNull @MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type,
+            @NotNull @Default("#[payload]") @RefOnly final Map<String, Object> entity) throws InvalidEntityException, SessionExpiredException {
         ObjectMapper m = new ObjectMapper();
         CookBookEntity input = getCookBookEntity(type, entity, m);
         return m.convertValue(this.getConfig().getClient().create(input), Map.class);
@@ -126,8 +128,8 @@ public class CookbookConnector {
     @Processor
     @OnException(handler = CookbookHandler.class)
     @SuppressWarnings("unchecked")
-    public Map<String, Object> update(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String type, @Default("#[payload]") @RefOnly Map<String, Object> entity)
-            throws InvalidEntityException, SessionExpiredException, NoSuchEntityException {
+    public Map<String, Object> update(@NotNull @MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type,
+            @NotNull @Default("#[payload]") @RefOnly final Map<String, Object> entity) throws InvalidEntityException, SessionExpiredException, NoSuchEntityException {
         ObjectMapper m = new ObjectMapper();
         CookBookEntity input = getCookBookEntity(type, entity, m);
         return m.convertValue(this.getConfig().getClient().update(input), Map.class);
@@ -153,8 +155,8 @@ public class CookbookConnector {
     @Processor
     @OnException(handler = CookbookHandler.class)
     @SuppressWarnings("unchecked")
-    public Map<String, Object> get(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) String type, @Default("1") Integer id) throws InvalidEntityException,
-            SessionExpiredException, NoSuchEntityException {
+    public Map<String, Object> get(@NotNull @MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final String type, @NotNull @Default("1") final Integer id)
+            throws InvalidEntityException, SessionExpiredException, NoSuchEntityException {
         ObjectMapper m = new ObjectMapper();
         return m.convertValue(this.getConfig().getClient().get(id), Map.class);
     }
@@ -173,7 +175,7 @@ public class CookbookConnector {
     @OAuthProtected
     @Processor
     @OnException(handler = CookbookHandler.class)
-    public void delete(@Default("1") Integer id) throws NoSuchEntityException, SessionExpiredException {
+    public void delete(@NotNull @Default("1") final Integer id) throws NoSuchEntityException, SessionExpiredException {
         this.getConfig().getClient().delete(id);
     }
 
@@ -192,7 +194,7 @@ public class CookbookConnector {
     @OAuthProtected
     @Processor
     @Paged
-    public ProviderAwarePagingDelegate<Map<String, Object>, CookbookConnector> queryPaginated(final String query, final PagingConfiguration pagingConfiguration)
+    public ProviderAwarePagingDelegate<Map<String, Object>, CookbookConnector> queryPaginated(@NotNull final String query, @NotNull final PagingConfiguration pagingConfiguration)
             throws SessionExpiredException {
         return new CookbookPagingDelegate(query, pagingConfiguration.getFetchSize());
     }
@@ -206,7 +208,7 @@ public class CookbookConnector {
      */
     @Transformer(sourceTypes = { List.class
     })
-    public static List<Map<String, Object>> recipesToMaps(List<Recipe> list) {
+    public static List<Map<String, Object>> recipesToMaps(@NotNull final List<Recipe> list) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(list, new TypeReference<List<Map<String, Object>>>() {
         });
@@ -221,22 +223,23 @@ public class CookbookConnector {
      */
     @Transformer(sourceTypes = { Recipe.class
     })
-    public static Map<String, Object> recipeToMap(Recipe recipe) {
+    public static Map<String, Object> recipeToMap(@NotNull final Recipe recipe) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(recipe, new TypeReference<Map<String, Object>>() {
         });
     }
 
+    @NotNull
     public AbstractConfig getConfig() {
         return config;
     }
 
-    public void setConfig(AbstractConfig config) {
+    public void setConfig(@NotNull AbstractConfig config) {
         this.config = config;
     }
 
-    private CookBookEntity getCookBookEntity(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String type, @Default("#[payload]") @RefOnly Map<String, Object> entity,
-            ObjectMapper m) throws InvalidEntityException {
+    private CookBookEntity getCookBookEntity(@NotNull @MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type,
+            @NotNull @Default("#[payload]") @RefOnly final Map<String, Object> entity, ObjectMapper m) throws InvalidEntityException {
         CookBookEntity input;
         if (type.contains("com.cookbook.tutorial.service.Recipe")) {
             input = m.convertValue(entity, Recipe.class);

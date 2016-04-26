@@ -7,10 +7,11 @@ package org.mule.modules.cookbook.automation.runner;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 import org.mule.modules.cookbook.automation.unit.CookbookConnectorTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ CookbookConnectorTest.class
+@SuiteClasses({ CookbookConnectorTest.class
 })
 public class UnitTestSuite {
 

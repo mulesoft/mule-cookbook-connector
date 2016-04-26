@@ -18,9 +18,9 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class CookbookMetaDataTestCases extends AbstractTestCase<CookbookConnector> {
+public class DataSenseResolverMetaDataTestCases extends AbstractTestCase<CookbookConnector> {
 
-    public CookbookMetaDataTestCases() {
+    public DataSenseResolverMetaDataTestCases() {
         super(CookbookConnector.class);
     }
 

@@ -17,7 +17,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class BasicConfigSystemTestCases {
+public class BasicConfigTestCases {
 
     private Properties validCredentials;
     private String address;
@@ -48,6 +48,28 @@ public class BasicConfigSystemTestCases {
     public void invalidCredentialsConnectivityTest() {
         try {
             config.connect("noUsername", "noPassword");
+        } catch (ConnectionException ce) {
+            assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void invalidUsernameCredentialTest() {
+        try {
+            config.connect("noUsername", password);
+        } catch (ConnectionException ce) {
+            assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void invalidPasswordCredentialTest() {
+        try {
+            config.connect(username, "noPassword");
         } catch (ConnectionException ce) {
             assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
         } catch (Exception e) {
