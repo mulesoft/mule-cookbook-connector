@@ -31,7 +31,8 @@ public class GetRecentlyAddedSourceTestCases extends AbstractTestCase<CookbookCo
     @Before
     public void setUp() throws Throwable {
         testData = TestDataBuilder.getRecentlyAddedSourceTestData();
-        getDispatcher().initializeSource("getRecentlyAddedSource", new Object[] { null
+        getDispatcher().initializeSource("getRecentlyAddedSource", new Object[] {
+                null
         });
         getConnector().create((String) testData.get("type"), (Map<String, Object>) testData.get("recipe-ref"));
         Thread.sleep(2000);

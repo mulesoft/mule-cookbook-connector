@@ -30,10 +30,8 @@ public class Config extends AbstractConfig {
     /**
      * Connect
      *
-     * @param username
-     *            A username
-     * @param password
-     *            A password
+     * @param username A username
+     * @param password A password
      * @throws ConnectionException
      */
     @Connect

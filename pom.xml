@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+    <packaging>mule-module</packaging>
+
+    <name>Mule Cookbook Connector</name>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-cookbook</artifactId>
     <version>1.0.0</version>
-    <packaging>mule-module</packaging>
-    <name>Mule Cookbook Connector</name>
 
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
@@ -17,28 +17,35 @@
 
     <properties>
         <category>Community</category>
-        <jdk.version>1.7</jdk.version>
         <licensePath>LICENSE.md</licensePath>
-        <cookbook.version>1.0.0</cookbook.version>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
+        <jdk.version>1.7</jdk.version>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>sdk-client</artifactId>
-            <version>${cookbook.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>annotations</artifactId>
-            <version>12.0</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.mule.certification</groupId>
+                <artifactId>project-structure-validation</artifactId>
+                <version>1.0.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.mule.tools.devkit</groupId>
                 <artifactId>mule-devkit-maven-plugin</artifactId>
@@ -53,30 +60,22 @@
                     </inclusions>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.mule.certification</groupId>
-                <artifactId>project-structure-validation</artifactId>
-                <version>1.0.5</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>validate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>sdk-client</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+            <version>12.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <repository>

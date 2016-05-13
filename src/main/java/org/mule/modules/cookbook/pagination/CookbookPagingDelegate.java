@@ -37,8 +37,7 @@ public class CookbookPagingDelegate extends ProviderAwarePagingDelegate<Map<Stri
     /**
      * Returns the next page of items. If the return value is <code>null</code> or an empty list, then it means no more items are available
      *
-     * @param connector
-     *            The provider to be used to do the query. You can assume this provider is already properly initialised
+     * @param connector The provider to be used to do the query. You can assume this provider is already properly initialised
      * @return a populated list of elements. Returning <code>null</code> or an empty list, means no more items are available.
      * @throws Exception
      */
@@ -48,6 +47,7 @@ public class CookbookPagingDelegate extends ProviderAwarePagingDelegate<Map<Stri
         try {
             List<CookBookEntity> list = connector.getConfig().getClient().searchWithQuery(query, currentPage++, pageSize);
             return m.convertValue(list, new TypeReference<List<Map<String, Object>>>() {
+
             });
         } catch (SessionExpiredException ex) {
             // Revert the increment since we want to retry to get the same page if the reconnection is configured.
@@ -61,8 +61,7 @@ public class CookbookPagingDelegate extends ProviderAwarePagingDelegate<Map<Stri
      * <p/>
      * In some scenarios, it might not be possible/convenient to actually retrieve this value. -1 is returned in such a case.
      *
-     * @param provider
-     *            The provider to be used to do the query. You can assume this provider is already properly initialised
+     * @param provider The provider to be used to do the query. You can assume this provider is already properly initialised
      */
     @Override
     public int getTotalResults(CookbookConnector provider) throws Exception {
