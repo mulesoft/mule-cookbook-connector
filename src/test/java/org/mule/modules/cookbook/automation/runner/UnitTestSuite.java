@@ -11,7 +11,8 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.mule.modules.cookbook.automation.unit.CookbookConnectorTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ CookbookConnectorTest.class
+@SuiteClasses({
+        CookbookConnectorTest.class
 })
 public class UnitTestSuite {
 

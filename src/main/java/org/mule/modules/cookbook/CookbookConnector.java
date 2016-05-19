@@ -34,7 +34,8 @@ import java.util.Map;
  *
  * @author MuleSoft, Inc.
  */
-@ReconnectOn(exceptions = { SessionExpiredException.class
+@ReconnectOn(exceptions = {
+        SessionExpiredException.class
 })
 @Connector(name = "cookbook", friendlyName = "Cookbook", minMuleVersion = "3.6")
 @MetaDataScope(DataSenseResolver.class)
@@ -59,10 +60,8 @@ public class CookbookConnector {
      * Constantly polls the system to return the recently added recipes.
      * <p/>
      *
-     * @param callback
-     *            The callback that will hook the result into mule event.
-     * @throws Exception
-     *             When the source fails.
+     * @param callback The callback that will hook the result into mule event.
+     * @throws Exception When the source fails.
      */
     @OAuthProtected
     @Source(sourceStrategy = SourceStrategy.POLLING, pollingPeriod = 10000)
@@ -87,15 +86,11 @@ public class CookbookConnector {
      * Create Recipes and Ingredients
      * <p/>
      *
-     * @param type
-     *            Type of the entity
-     * @param entity
-     *            Ingredient/Recipe to be created
+     * @param type   Type of the entity
+     * @param entity Ingredient/Recipe to be created
      * @return return Id of the entity from the system.
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws InvalidEntityException
-     *             Exception thrown when an wrong entity or type is mapped to the entity parameter.
+     * @throws SessionExpiredException Exception thrown when an action is taken by a client who's session has expired.
+     * @throws InvalidEntityException  Exception thrown when an wrong entity or type is mapped to the entity parameter.
      */
     @OAuthProtected
     @Processor
@@ -112,17 +107,12 @@ public class CookbookConnector {
      * Update the existing entities (Recipes/Ingredients)
      * <p/>
      *
-     * @param type
-     *            Type of the entity
-     * @param entity
-     *            Entity to be updated
+     * @param type   Type of the entity
+     * @param entity Entity to be updated
      * @return return Entity with Id from the system.
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws InvalidEntityException
-     *             Exception thrown when an wrong entity or type is mapped to the entity parameter.
-     * @throws NoSuchEntityException
-     *             Exception thrown when the specified entity does not exist in the system.
+     * @throws SessionExpiredException Exception thrown when an action is taken by a client who's session has expired.
+     * @throws InvalidEntityException  Exception thrown when an wrong entity or type is mapped to the entity parameter.
+     * @throws NoSuchEntityException   Exception thrown when the specified entity does not exist in the system.
      */
     @OAuthProtected
     @Processor
@@ -139,17 +129,12 @@ public class CookbookConnector {
      * Retrieve the entity from the system based on the identifier.
      * <p/>
      *
-     * @param type
-     *            Type of the entity
-     * @param id
-     *            Id of the entity to retrieve
+     * @param type Type of the entity
+     * @param id   Id of the entity to retrieve
      * @return return Ingredient with Id from the system.
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws InvalidEntityException
-     *             Exception thrown when an wrong entity or type is mapped to the entity parameter.
-     * @throws NoSuchEntityException
-     *             Exception thrown when the specified entity does not exist in the system.
+     * @throws SessionExpiredException Exception thrown when an action is taken by a client who's session has expired.
+     * @throws InvalidEntityException  Exception thrown when an wrong entity or type is mapped to the entity parameter.
+     * @throws NoSuchEntityException   Exception thrown when the specified entity does not exist in the system.
      */
     @OAuthProtected
     @Processor
@@ -165,12 +150,9 @@ public class CookbookConnector {
      * Performs delete operation, based on the id corresponding entity is delete from system.
      * <p/>
      *
-     * @param id
-     *            Id of the entity to delete
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws NoSuchEntityException
-     *             Exception thrown when the specified entity does not exist in the system.
+     * @param id Id of the entity to delete
+     * @throws SessionExpiredException Exception thrown when an action is taken by a client who's session has expired.
+     * @throws NoSuchEntityException   Exception thrown when the specified entity does not exist in the system.
      */
     @OAuthProtected
     @Processor
@@ -183,13 +165,10 @@ public class CookbookConnector {
      * ResultSet retrieved based on the query.
      * <p/>
      *
-     * @param query
-     *            The query
-     * @param pagingConfiguration
-     *            the paging configuration
+     * @param query               The query
+     * @param pagingConfiguration the paging configuration
      * @return return comment
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
+     * @throws SessionExpiredException Exception thrown when an action is taken by a client who's session has expired.
      */
     @OAuthProtected
     @Processor
@@ -202,30 +181,32 @@ public class CookbookConnector {
     /**
      * Basic object mapper that converts list of Recipe entities to List of Map<String, Object> objects.
      *
-     * @param list
-     *            provide a list of Recipes to be mapped
+     * @param list provide a list of Recipes to be mapped
      * @return List of Map containing key/value pairs of the Recipe entity.
      */
-    @Transformer(sourceTypes = { List.class
+    @Transformer(sourceTypes = {
+            List.class
     })
     public static List<Map<String, Object>> recipesToMaps(@NotNull final List<Recipe> list) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(list, new TypeReference<List<Map<String, Object>>>() {
+
         });
     }
 
     /**
      * Basic object mapper that converts a Recipe entities to a Map<String, Object> object.
      *
-     * @param recipe
-     *            provide a Recipe to be mapped
+     * @param recipe provide a Recipe to be mapped
      * @return Map containing key/value pairs of the Recipe Object.
      */
-    @Transformer(sourceTypes = { Recipe.class
+    @Transformer(sourceTypes = {
+            Recipe.class
     })
     public static Map<String, Object> recipeToMap(@NotNull final Recipe recipe) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(recipe, new TypeReference<Map<String, Object>>() {
+
         });
     }
 

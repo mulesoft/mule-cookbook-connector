@@ -60,11 +60,9 @@ public class DataSenseResolver {
     /**
      * Get MetaData given the Key the user selects
      *
-     * @param key
-     *            The key selected from the list of valid keys
+     * @param key The key selected from the list of valid keys
      * @return The MetaData model of that corresponds to the key
-     * @throws Exception
-     *             If anything fails
+     * @throws Exception If anything fails
      */
     @MetaDataRetriever
     public MetaData getMetaData(MetaDataKey key) throws Exception {

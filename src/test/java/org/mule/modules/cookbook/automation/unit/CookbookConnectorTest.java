@@ -39,7 +39,8 @@ public class CookbookConnectorTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.connector = new CookbookConnector();
-        this.randomString = String.format("qaTest%s", new Object[] { UUID.randomUUID().toString().substring(0, 7)
+        this.randomString = String.format("qaTest%s", new Object[] {
+                UUID.randomUUID().toString().substring(0, 7)
         });
 
         Config config = new Config();
