@@ -16,6 +16,10 @@ import java.util.Map;
 
 public class TestDataBuilder {
 
+    private TestDataBuilder() {
+        // No instances of this class allowed
+    }
+
     private static Map<String, Object> getSpringBean(String beanName) {
         ApplicationContext context = new ClassPathXmlApplicationContext("AutomationSpringBeans.xml");
         @SuppressWarnings("unchecked")

@@ -5,30 +5,16 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.InvalidEntityException;
-import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.cookbook.tutorial.service.SessionExpiredException;
-import com.cookbook.tutorial.service.UnitType;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-public class UpdateTestCases extends AbstractTestCase<CookbookConnector> {
+public class UpdateTestCases extends AbstractTestCases {
 
     Map<String, Object> testData;
     Map<String, Object> objectMap;
 
-    public UpdateTestCases() {
-        super(CookbookConnector.class);
-    }
-
+/**
     @Before
     public void setup() throws Exception {
         testData = TestDataBuilder.updateTestData();
@@ -54,7 +40,7 @@ public class UpdateTestCases extends AbstractTestCase<CookbookConnector> {
             fail(e.getMessage());
         }
     }
-
+**/
     @After
     public void tearDown() throws Exception {
         getConnector().delete((Integer) objectMap.get("id"));

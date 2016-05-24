@@ -5,86 +5,59 @@
  */
 package org.mule.modules.cookbook.automation.system;
 
+
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
-import org.mule.api.ConnectionExceptionCode;
 import org.mule.modules.cookbook.config.Config;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
 
 public class BasicConfigTestCases {
 
-    private Properties validCredentials;
-    private String address;
+    private Config config;
     private String username;
     private String password;
-    private Config config;
 
     @Before
     public void setUp() throws Exception {
-        validCredentials = ConfigurationUtils.getAutomationCredentialsProperties();
-        address = validCredentials.getProperty("config.address");
-        username = validCredentials.getProperty("config.username");
-        password = validCredentials.getProperty("config.password");
+        final Properties props = ConfigurationUtils.getAutomationCredentialsProperties();
         config = new Config();
-        config.setAddress(address);
+        config.setAddress(props.getProperty("config.address"));
+        username = props.getProperty("config.username");
+        password = props.getProperty("config.password");
     }
 
     @Test
-    public void validCredentialsConnectivityTest() {
-        try {
-            config.connect(username, password);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    public void testValidCredentials() throws ConnectionException {
+        config.connect(username, password);
+        assertThat(config.getClient(), is(notNullValue()));
     }
 
-    @Test
-    public void invalidCredentialsConnectivityTest() {
-        try {
-            config.connect("noUsername", "noPassword");
-        } catch (ConnectionException ce) {
-            assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    @Test(expected = ConnectionException.class)
+    public void testInvalidCredentials() throws ConnectionException {
+        config.connect("noUsername", "noPassword");
     }
 
-    @Test
-    public void invalidUsernameCredentialTest() {
-        try {
-            config.connect("noUsername", password);
-        } catch (ConnectionException ce) {
-            assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    @Test(expected = ConnectionException.class)
+    public void testInvalidUsername() throws ConnectionException {
+        config.connect("noUsername", password);
     }
 
-    @Test
-    public void invalidPasswordCredentialTest() {
-        try {
-            config.connect(username, "noPassword");
-        } catch (ConnectionException ce) {
-            assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    @Test(expected = ConnectionException.class)
+    public void testInvalidPassword() throws ConnectionException {
+        config.connect(username, "noPassword");
     }
 
-    @Test
-    public void nullCredentialsConnectivityTest() {
-        try {
-            config.connect(null, null);
-        } catch (ConnectionException ce) {
-            assertEquals(ConnectionExceptionCode.INCORRECT_CREDENTIALS, ce.getCode());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    @Test(expected = ConnectionException.class)
+    public void testNullCredentials() throws ConnectionException {
+        config.connect(null, null);
     }
 }

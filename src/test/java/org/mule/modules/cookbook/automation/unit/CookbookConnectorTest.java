@@ -5,29 +5,8 @@
  */
 package org.mule.modules.cookbook.automation.unit;
 
-import com.cookbook.tutorial.client.MuleCookBookClient;
-import com.cookbook.tutorial.service.CookBookEntity;
-import com.cookbook.tutorial.service.Ingredient;
-import com.cookbook.tutorial.service.Recipe;
-import com.cookbook.tutorial.service.UnitType;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.modules.cookbook.config.Config;
-import org.mule.streaming.PagingConfiguration;
-import org.mule.streaming.ProviderAwarePagingDelegate;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-
 public class CookbookConnectorTest {
-
+/**
     private CookbookConnector connector;
 
     private String randomString;
@@ -161,5 +140,5 @@ public class CookbookConnectorTest {
         objectMap.put("prepTime", 10.0);
         objectMap.put("ingredients", Arrays.asList(getIngredientMap()));
         return objectMap;
-    }
+    } **/
 }

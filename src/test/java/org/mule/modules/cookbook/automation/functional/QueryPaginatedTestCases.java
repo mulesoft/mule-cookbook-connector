@@ -5,26 +5,13 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.SessionExpiredException;
-import org.junit.Before;
-import org.junit.Test;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.streaming.PagingConfiguration;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+import java.util.Map;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-public class QueryPaginatedTestCases extends AbstractTestCase<CookbookConnector> {
+public class QueryPaginatedTestCases extends AbstractTestCases {
 
     Map<String, Object> testData;
 
-    public QueryPaginatedTestCases() {
-        super(CookbookConnector.class);
-    }
-
+/**
     @Before
     public void setup() throws Exception {
         testData = TestDataBuilder.queryPaginatedTestData();
@@ -49,5 +36,5 @@ public class QueryPaginatedTestCases extends AbstractTestCase<CookbookConnector>
         } catch (Throwable throwable) {
             fail(throwable.getMessage());
         }
-    }
+    }**/
 }

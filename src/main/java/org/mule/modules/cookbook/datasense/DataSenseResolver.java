@@ -5,24 +5,6 @@
  */
 package org.mule.modules.cookbook.datasense;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.mule.api.annotations.MetaDataKeyRetriever;
-import org.mule.api.annotations.MetaDataRetriever;
-import org.mule.api.annotations.components.MetaDataCategory;
-import org.mule.common.metadata.DefaultMetaData;
-import org.mule.common.metadata.DefaultMetaDataKey;
-import org.mule.common.metadata.MetaData;
-import org.mule.common.metadata.MetaDataKey;
-import org.mule.common.metadata.MetaDataModel;
-import org.mule.common.metadata.builder.DefaultMetaDataBuilder;
-import org.mule.common.metadata.builder.DynamicObjectBuilder;
-import org.mule.common.metadata.datatype.DataType;
-import org.mule.modules.cookbook.CookbookConnector;
-
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.Description;
 import com.cookbook.tutorial.service.Ingredient;
@@ -31,8 +13,24 @@ import com.cookbook.tutorial.service.InvalidTokenException;
 import com.cookbook.tutorial.service.NoSuchEntityException;
 import com.cookbook.tutorial.service.SessionExpiredException;
 import com.cookbook.tutorial.service.UnitType;
+import org.jetbrains.annotations.NotNull;
+import org.mule.api.annotations.MetaDataKeyRetriever;
+import org.mule.api.annotations.MetaDataRetriever;
+import org.mule.api.annotations.components.MetaDataCategory;
+import org.mule.common.metadata.DefaultMetaData;
+import org.mule.common.metadata.DefaultMetaDataKey;
+import org.mule.common.metadata.MetaData;
+import org.mule.common.metadata.MetaDataKey;
+import org.mule.common.metadata.builder.DefaultMetaDataBuilder;
+import org.mule.common.metadata.builder.DynamicObjectBuilder;
+import org.mule.common.metadata.datatype.DataType;
+import org.mule.modules.cookbook.CookbookConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 @MetaDataCategory
 public class DataSenseResolver {
@@ -47,13 +45,11 @@ public class DataSenseResolver {
      */
     @MetaDataKeyRetriever
     public List<MetaDataKey> getMetaDataKeys() throws Exception {
-        List<MetaDataKey> keys = new ArrayList<MetaDataKey>();
+        List<MetaDataKey> keys = new ArrayList<>();
         List<CookBookEntity> entities = getConnector().getConfig().getClient().getEntities();
-        // Generate the keys
         for (CookBookEntity entity : entities) {
-            keys.add(new DefaultMetaDataKey(entity.getClass().getName() + "#" + entity.getId(), entity.getName()));
+            keys.add(new DefaultMetaDataKey(entity.getName(), entity.getName()));
         }
-
         return keys;
     }
 
@@ -65,31 +61,21 @@ public class DataSenseResolver {
      * @throws Exception If anything fails
      */
     @MetaDataRetriever
-    public MetaData getMetaData(MetaDataKey key) throws Exception {
+    public MetaData getMetaData(@NotNull final MetaDataKey key) throws Exception {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
+
         // Since our model is static and we can simply create the pojo model.
-        String[] keyParts = key.getId().split("#");
-        if (keyParts.length != 2) {
-            throw new RuntimeException("Invalid key. Format should be 'entityType#id'");
-        }
-        Integer id = Integer.valueOf(keyParts[1]);
-        CookBookEntity entity = (CookBookEntity) Class.forName(keyParts[0]).newInstance();
-        entity.setId(id);
+        CookBookEntity entity = (CookBookEntity) Class.forName("com.cookbook.tutorial.service." + key.getId()).newInstance();
         Description description = getConnector().getConfig().getClient().describeEntity(entity);
 
         DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key.getId());
-
         for (Description fields : description.getInnerFields()) {
             addFields(fields, dynamicObject);
         }
-
-        MetaDataModel model = builder.build();
-        MetaData metaData = new DefaultMetaData(model);
-
-        return metaData;
+        return new DefaultMetaData(builder.build());
     }
 
-    private void addFields(Description description, DynamicObjectBuilder<?> dynamicObject) {
+    private void addFields(@NotNull final Description description, @NotNull final DynamicObjectBuilder<?> dynamicObject) {
         switch (description.getDataType()) {
             case DATE:
                 dynamicObject.addSimpleField(description.getName(), DataType.DATE_TIME);
@@ -110,13 +96,7 @@ public class DataSenseResolver {
                         for (Description desc : ingredientDescription.getInnerFields()) {
                             addFields(desc, innerObject);
                         }
-                    } catch (InvalidTokenException e) {
-                        logger.error(e.getMessage(), e);
-                    } catch (InvalidEntityException e) {
-                        logger.error(e.getMessage(), e);
-                    } catch (NoSuchEntityException e) {
-                        logger.error(e.getMessage(), e);
-                    } catch (SessionExpiredException e) {
+                    } catch (InvalidTokenException | InvalidEntityException | NoSuchEntityException | SessionExpiredException e) {
                         logger.error(e.getMessage(), e);
                     }
                 }

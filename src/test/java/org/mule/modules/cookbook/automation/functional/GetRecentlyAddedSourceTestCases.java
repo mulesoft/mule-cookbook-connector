@@ -5,29 +5,16 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.Recipe;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
-public class GetRecentlyAddedSourceTestCases extends AbstractTestCase<CookbookConnector> {
+public class GetRecentlyAddedSourceTestCases extends AbstractTestCases {
 
     Map<String, Object> testData;
     List<Integer> recipeIds = new ArrayList<Integer>(0);
 
-    public GetRecentlyAddedSourceTestCases() {
-        super(CookbookConnector.class);
-    }
-
+/**
     @Before
     public void setUp() throws Throwable {
         testData = TestDataBuilder.getRecentlyAddedSourceTestData();
@@ -58,5 +45,5 @@ public class GetRecentlyAddedSourceTestCases extends AbstractTestCase<CookbookCo
             getConnector().delete(id);
         }
         getDispatcher().shutDownSource("getRecentlyAddedSource");
-    }
+    }**/
 }

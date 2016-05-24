@@ -6,7 +6,6 @@
 package org.mule.modules.cookbook.automation.system;
 
 import com.cookbook.tutorial.service.InvalidTokenException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.config.OAuthConfig;
@@ -14,47 +13,38 @@ import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 
 public class OAuthConfigTestCases {
 
-    private Properties validCredentials;
     private OAuthConfig config;
 
     @Before
     public void setUp() throws Exception {
-        validCredentials = ConfigurationUtils.getAutomationCredentialsProperties();
+        final Properties props = ConfigurationUtils.getAutomationCredentialsProperties();
         config = new OAuthConfig();
-        config.setAddress(validCredentials.getProperty("config.address"));
-        config.setConsumerKey(validCredentials.getProperty("oauth.consumerKey"));
-        config.setConsumerSecret(validCredentials.getProperty("oauth.consumerSecret"));
-        config.setAccessToken(validCredentials.getProperty("oauth.accessToken"));
+        config.setAddress(props.getProperty("config.address"));
+        config.setConsumerKey(props.getProperty("oauth.consumerKey"));
+        config.setConsumerSecret(props.getProperty("oauth.consumerSecret"));
+        config.setAccessToken(props.getProperty("oauth.accessToken"));
         config.postAuthorize();
     }
 
     @Test
-    public void validCredentialsTest() {
-        try {
-            config.testConnect();
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    public void testValidCredentials() throws Exception {
+        config.testConnect();
     }
 
     @Test
-    public void invalidCredentialsTest() {
-        try {
+    public void testEmptyAccessToken() throws Exception {
+        try{
             config.setAccessToken("");
             config.postAuthorize();
-
             config.testConnect();
-        } catch (Exception e) {
-            if (e.getCause() instanceof InvalidTokenException) {
-                assertTrue(true);
-            } else {
-                fail(e.getMessage());
-            }
+        } catch(RuntimeException e){
+            assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
+
     }
 }
