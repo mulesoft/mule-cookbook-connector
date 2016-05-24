@@ -14,15 +14,13 @@ public class EntityMetaDataTestCases extends AbstractMetaDataTestCase<CookbookCo
 
     static {
         CollectionUtils.addAll(keys, new Object[] {
-
-                "Ingredient", "Recipe"
+                "Ingredient",
+                "Recipe"
         });
-
     }
 
     public EntityMetaDataTestCases() {
         super(keys, DataSenseResolver.class, CookbookConnector.class);
     }
-
 
 }

@@ -5,13 +5,19 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.Ingredient;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.mule.tools.devkit.ctf.exceptions.XMLUtilsException;
 import org.mule.tools.devkit.ctf.utils.XMLUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.stream.XMLStreamReader;
+import java.util.List;
 import java.util.Map;
 
 public class TestDataBuilder {
@@ -20,48 +26,67 @@ public class TestDataBuilder {
         // No instances of this class allowed
     }
 
-    private static Map<String, Object> getSpringBean(String beanName) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("AutomationSpringBeans.xml");
-        @SuppressWarnings("unchecked")
-        Map<String, Object> testData = (Map<String, Object>) context.getBean(beanName);
-        ((ConfigurableApplicationContext) context).close();
-        return testData;
-    }
-
-    private static String getFileName(String operation) {
-        final String path = System.getProperty("user.dir") + "/src/test/resources/payloads.xml/IMuleCookBookService#" + operation.toLowerCase() + ".xml";
-        return path;
-    }
-
     public static Map<String, Object> createTestData() {
-        return getSpringBean("createTestData");
+        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
+        //return getSpringBean("createTestData");
     }
 
     public static Map<String, Object> deleteTestData() {
-        return getSpringBean("deleteTestData");
-    }
-
-    public static Map<String, Object> getRecentlyAddedSourceTestData() {
-        return getSpringBean("getRecentlyAddedSourceTestData");
+        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
+        //return getSpringBean("deleteTestData");
     }
 
     public static Map<String, Object> getRecentlyAddedTestData() {
-        return getSpringBean("getRecentlyAddedTestData");
+        ImmutableList directions = ImmutableList. of(
+                "Whip the curd till its smooth.",
+                "Mix well.",
+                "Add the chopped pineapple and half of the pomegranate seeds.",
+                "Reserve the other half for garnishing.",
+                "Chill the pineapple raita before serving.",
+                "Garnish the pineapple raita with the remaining pomegranate and chopped coriander leaves."
+        );
+
+        ImmutableList ingredients = ImmutableList.<Map<String, Object>> of(
+                ImmutableMap.<String, Object> of("name", "Yogurt", "unit", "CUPS", "quantity", "2.5"),
+                ImmutableMap.<String, Object> of("name", "Chopped fresh sweet pineapple", "unit", "CUPS", "quantity", "2.0"),
+                ImmutableMap.<String, Object> of("name", "Cayenne Pepper", "unit", "UNIT", "quantity", "1.0"),
+                ImmutableMap.<String, Object> of("name", "Roasted cumin powder", "unit", "SPOONS", "quantity", "2.0"),
+                ImmutableMap.<String, Object> of("name", "Sugar", "unit", "SPOONS", "quantity", "3.0"),
+                ImmutableMap.<String, Object> of("name", "Pomegranate", "unit", "CUPS", "quantity", "0.5"),
+                ImmutableMap.<String, Object> of("name", "Coriander Leaves", "unit", "UNIT", "quantity", "3"),
+                ImmutableMap.<String, Object> of("name", "Black Salt/Rock Salt", "unit", "SPOONS", "quantity", "1"));
+
+        ImmutableMap recipe = ImmutableMap.<String, Object> of(
+                "cookTime", "55.0",
+                "directions", directions,
+                "ingredients", ingredients,
+                "prepTime", "15.0"
+        );
+
+        return ImmutableMap.<String, Object> of(
+                "type", "recipe",
+                "recipe-ref", recipe);
+        //return getSpringBean("getRecentlyAddedTestData");
     }
 
     public static Map<String, Object> getTestData() {
-        return getSpringBean("getTestData");
+        return ImmutableMap.<String, Object> of("type", "ingredient", "id", 1, "name", "Extra Lean Ground Beef");
+        //return getSpringBean("getTestData");
     }
 
+
     public static Map<String, Object> queryPaginatedTestData() {
-        return getSpringBean("queryPaginatedTestData");
+        return ImmutableMap.<String, Object> of("query", "GET ALL FROM INGREDIENT", "fetchSize", "10");
+        //return getSpringBean("queryPaginatedTestData");
     }
 
     public static Map<String, Object> updateTestData() {
-        return getSpringBean("updateTestData");
+        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8"));
+        //return getSpringBean("updateTestData");
     }
 
-    public static XMLStreamReader getXMLStreamReaderForGet() throws XMLUtilsException {
-        return XMLUtils.loadFile(getFileName("get"));
+    public static Map<String, Object> updateRollbackTestData() {
+        return ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "GRAMS", "quantity", "1.0");
     }
+
 }

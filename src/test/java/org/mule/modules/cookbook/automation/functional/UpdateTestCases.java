@@ -5,45 +5,46 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+import com.cookbook.tutorial.service.Ingredient;
+import com.cookbook.tutorial.service.UnitType;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mule.modules.cookbook.utils.EntityType;
 
 import java.util.Map;
 
 public class UpdateTestCases extends AbstractTestCases {
 
-    Map<String, Object> testData;
-    Map<String, Object> objectMap;
+    private Map<String, Object> testData;
 
-/**
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         testData = TestDataBuilder.updateTestData();
-        Map<String, Object> ingredient = (Map<String, Object>) testData.get("ingredient-ref");
-        objectMap = getConnector().create((String) testData.get("type"), ingredient);
     }
 
     @Test
     public void testUpdate() {
-        try {
-            Map<String, Object> ingredient = (Map<String, Object>) testData.get("ingredient-update-ref");
-            // update the objectMap.
-            objectMap.put("unit", ingredient.get("unit"));
-            objectMap.put("quantity", ingredient.get("quantity"));
-            final Map<String, Object> updatedObjectMap = getConnector().update((String) testData.get("type"), objectMap);
-            assertEquals(((UnitType) ingredient.get("unit")).name(), updatedObjectMap.get("unit"));
-            assertEquals(Double.valueOf((String) ingredient.get("quantity")), updatedObjectMap.get("quantity"));
-        } catch (NoSuchEntityException e) {
-            fail(e.getMessage());
-        } catch (SessionExpiredException e) {
-            fail(e.getMessage());
-        } catch (InvalidEntityException e) {
-            fail(e.getMessage());
-        }
+        Map<String, Object> entityRef = (Map<String, Object>) testData.get("entity-ref");
+        Double quantity = Double.valueOf((String)entityRef.get("quantity"));
+        UnitType unit = UnitType.valueOf((String)entityRef.get("unit"));
+
+        Ingredient updated = (Ingredient)getConnector().update(EntityType.INGREDIENT, entityRef);
+        assertThat(updated.getQuantity(), equalTo(quantity));
+        assertThat(updated.getUnit(), equalTo(unit));
+
+        Ingredient newCurrent = (Ingredient)getConnector().get(EntityType.INGREDIENT, 1);
+        assertThat(newCurrent.getQuantity(), equalTo(quantity));
+        assertThat(newCurrent.getUnit(), equalTo(unit));
+
     }
-**/
+
     @After
     public void tearDown() throws Exception {
-        getConnector().delete((Integer) objectMap.get("id"));
+        getConnector().update(EntityType.INGREDIENT, TestDataBuilder.updateRollbackTestData());
     }
 
 }

@@ -15,6 +15,8 @@ import java.util.Properties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class OAuthConfigTestCases {
 
@@ -28,12 +30,13 @@ public class OAuthConfigTestCases {
         config.setConsumerKey(props.getProperty("oauth.consumerKey"));
         config.setConsumerSecret(props.getProperty("oauth.consumerSecret"));
         config.setAccessToken(props.getProperty("oauth.accessToken"));
-        config.postAuthorize();
     }
 
     @Test
     public void testValidCredentials() throws Exception {
+        config.postAuthorize();
         config.testConnect();
+        assertThat(config.getClient(), is(notNullValue()));
     }
 
     @Test
@@ -45,6 +48,27 @@ public class OAuthConfigTestCases {
         } catch(RuntimeException e){
             assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
+    }
 
+    @Test
+    public void testNullAccessToken() throws Exception {
+        try{
+            config.setAccessToken(null);
+            config.postAuthorize();
+            config.testConnect();
+        } catch(RuntimeException e){
+            assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
+        }
+    }
+
+    @Test
+    public void testInvalidAccessToken() throws Exception {
+        try{
+            config.setAccessToken("AAA1234567#123CCC");
+            config.postAuthorize();
+            config.testConnect();
+        } catch(RuntimeException e){
+            assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
+        }
     }
 }

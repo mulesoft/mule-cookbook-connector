@@ -5,8 +5,6 @@
  */
 package org.mule.modules.cookbook.automation.system;
 
-
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
@@ -18,7 +16,6 @@ import java.util.Properties;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-
 
 public class BasicConfigTestCases {
 
@@ -47,6 +44,16 @@ public class BasicConfigTestCases {
     }
 
     @Test(expected = ConnectionException.class)
+    public void testEmptyCredentials() throws ConnectionException {
+        config.connect("", "");
+    }
+
+    @Test(expected = ConnectionException.class)
+    public void testNullCredentials() throws ConnectionException {
+        config.connect(null, null);
+    }
+
+    @Test(expected = ConnectionException.class)
     public void testInvalidUsername() throws ConnectionException {
         config.connect("noUsername", password);
     }
@@ -56,8 +63,4 @@ public class BasicConfigTestCases {
         config.connect(username, "noPassword");
     }
 
-    @Test(expected = ConnectionException.class)
-    public void testNullCredentials() throws ConnectionException {
-        config.connect(null, null);
-    }
 }

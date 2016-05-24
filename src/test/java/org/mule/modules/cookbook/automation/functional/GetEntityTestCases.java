@@ -6,8 +6,11 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.Ingredient;
 import com.cookbook.tutorial.service.NoSuchEntityException;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,31 +19,26 @@ import org.mule.modules.cookbook.utils.EntityType;
 
 import java.util.Map;
 
-public class DeleteTestCases extends AbstractTestCases {
+public class GetEntityTestCases extends AbstractTestCases {
 
     private Map<String, Object> testData;
-    private Integer entityId;
 
     @Before
     public void setUp() throws Exception {
-        testData = TestDataBuilder.deleteTestData();
-        entityId = getConnector().create(EntityType.find((String)testData.get("type")), (Map<String, Object>)testData.get("entity-ref")).getId();
+        testData = TestDataBuilder.getTestData();
     }
 
     @Test
-    public void testDelete() throws CookbookException {
-        getConnector().delete(entityId);
-        try{
-            getConnector().get(EntityType.INGREDIENT, entityId);
-        } catch(CookbookException e){
-            assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
-        }
+    public void testGetIngredient() {
+        final CookBookEntity entity = getConnector().get(EntityType.find((String) testData.get("type")), (Integer) testData.get("id"));
+        assertThat(entity, instanceOf(Ingredient.class));
+        assertThat(entity.getName(), equalTo(testData.get("name")));
     }
 
     @Test
-    public void testDeleteEntityNotFound() {
-        try{
-            getConnector().delete(-1);
+    public void testGetNonExistentIngredient() {
+        try {
+            getConnector().get(EntityType.INGREDIENT, -1);
         } catch(CookbookException e){
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
