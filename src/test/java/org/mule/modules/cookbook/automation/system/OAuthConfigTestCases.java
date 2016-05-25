@@ -8,6 +8,7 @@ package org.mule.modules.cookbook.automation.system;
 import com.cookbook.tutorial.service.InvalidTokenException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mule.module.ws.consumer.SoapFaultException;
 import org.mule.modules.cookbook.config.OAuthConfig;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
@@ -57,7 +58,7 @@ public class OAuthConfigTestCases {
             config.postAuthorize();
             config.testConnect();
         } catch(RuntimeException e){
-            assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
+            assertThat(e.getCause(), instanceOf(SoapFaultException.class));
         }
     }
 
