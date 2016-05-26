@@ -5,19 +5,8 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.CookBookEntity;
-import com.cookbook.tutorial.service.Ingredient;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.mule.tools.devkit.ctf.exceptions.XMLUtilsException;
-import org.mule.tools.devkit.ctf.utils.XMLUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.stream.XMLStreamReader;
-import java.util.List;
 import java.util.Map;
 
 public class TestDataBuilder {
@@ -28,13 +17,28 @@ public class TestDataBuilder {
 
     public static Map<String, Object> createTestData() {
         return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
-        //return getSpringBean("createTestData");
+    }
+
+    public static Map<String, Object> createWithIdTestData() {
+        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("id", 1, "name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
     }
 
     public static Map<String, Object> deleteTestData() {
         return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
-        //return getSpringBean("deleteTestData");
     }
+
+    public static Map<String, Object> getTestData() {
+        return ImmutableMap.<String, Object> of("type", "ingredient", "id", 1, "name", "Extra Lean Ground Beef");
+    }
+
+    public static Integer[] getMultipleEntitiesIDs() {
+        return new Integer[]{1, 2, 3, 4, 959};
+    }
+
+    public static Integer[] getMultipleInvalidEntitiesIDs() {
+        return new Integer[]{1, 2, -3, -4, -959};
+    }
+
 
     public static Map<String, Object> getRecentlyAddedTestData() {
         ImmutableList directions = ImmutableList. of(
@@ -66,23 +70,18 @@ public class TestDataBuilder {
         return ImmutableMap.<String, Object> of(
                 "type", "recipe",
                 "recipe-ref", recipe);
-        //return getSpringBean("getRecentlyAddedTestData");
     }
-
-    public static Map<String, Object> getTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "id", 1, "name", "Extra Lean Ground Beef");
-        //return getSpringBean("getTestData");
-    }
-
 
     public static Map<String, Object> queryPaginatedTestData() {
         return ImmutableMap.<String, Object> of("query", "GET ALL FROM INGREDIENT", "fetchSize", "10");
-        //return getSpringBean("queryPaginatedTestData");
     }
 
     public static Map<String, Object> updateTestData() {
         return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8"));
-        //return getSpringBean("updateTestData");
+    }
+
+    public static Map<String, Object> updateWithoutIdTestData() {
+        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8"));
     }
 
     public static Map<String, Object> updateRollbackTestData() {

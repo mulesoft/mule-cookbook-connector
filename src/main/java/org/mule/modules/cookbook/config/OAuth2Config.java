@@ -25,7 +25,7 @@ import org.mule.api.annotations.oauth.OAuthPostAuthorization;
  * @author MuleSoft, Inc.
  */
 @OAuth2(configElementName = "oauth2", friendlyName = "OAuth 2.0", authorizationUrl = "http://devkit-cookbook.cloudhub.io/rest/oauth/authorize", accessTokenUrl = "http://devkit-cookbook.cloudhub.io/rest/oauth/accessToken")
-public class OAuthConfig extends AbstractConfig {
+public class OAuth2Config extends AbstractConfig {
 
     /**
      * An access token associated with this instance.

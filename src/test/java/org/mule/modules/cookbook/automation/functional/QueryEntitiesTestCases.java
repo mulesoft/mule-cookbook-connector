@@ -24,7 +24,7 @@ public class QueryEntitiesTestCases extends AbstractTestCases {
     Map<String, Object> testData;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testData = TestDataBuilder.queryPaginatedTestData();
     }
 

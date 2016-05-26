@@ -16,13 +16,13 @@ import org.mule.modules.cookbook.utils.EntityType;
 
 import java.util.Map;
 
-public class DeleteTestCases extends AbstractTestCases {
+public class DeleteEntityTestCases extends AbstractTestCases {
 
     private Map<String, Object> testData;
     private Integer entityId;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws CookbookException {
         testData = TestDataBuilder.deleteTestData();
         entityId = getConnector().create(EntityType.find((String)testData.get("type")), (Map<String, Object>)testData.get("entity-ref")).getId();
     }

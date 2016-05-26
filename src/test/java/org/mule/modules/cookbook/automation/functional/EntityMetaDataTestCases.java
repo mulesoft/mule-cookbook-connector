@@ -1,7 +1,7 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.modules.cookbook.datasense.DataSenseResolver;
+import org.mule.modules.cookbook.datasense.EntityMetaData;
 import org.mule.tools.devkit.ctf.junit.AbstractMetaDataTestCase;
 import org.mule.util.CollectionUtils;
 
@@ -20,7 +20,7 @@ public class EntityMetaDataTestCases extends AbstractMetaDataTestCase<CookbookCo
     }
 
     public EntityMetaDataTestCases() {
-        super(keys, DataSenseResolver.class, CookbookConnector.class);
+        super(keys, EntityMetaData.class, CookbookConnector.class);
     }
 
 }

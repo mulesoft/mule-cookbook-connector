@@ -5,16 +5,10 @@
  */
 package org.mule.modules.cookbook.datasense;
 
-import com.cookbook.tutorial.service.CookBookEntity;
-import com.cookbook.tutorial.service.Description;
-import com.cookbook.tutorial.service.Ingredient;
-import com.cookbook.tutorial.service.InvalidEntityException;
-import com.cookbook.tutorial.service.InvalidTokenException;
-import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.cookbook.tutorial.service.SessionExpiredException;
-import com.cookbook.tutorial.service.UnitType;
+import com.cookbook.tutorial.service.*;
 import org.jetbrains.annotations.NotNull;
 import org.mule.api.annotations.MetaDataKeyRetriever;
+import org.mule.api.annotations.MetaDataOutputRetriever;
 import org.mule.api.annotations.MetaDataRetriever;
 import org.mule.api.annotations.components.MetaDataCategory;
 import org.mule.common.metadata.DefaultMetaData;
@@ -34,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @MetaDataCategory
-public class DataSenseResolver {
+public class EntityMetaData {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(EntityMetaData.class);
 
     @Inject
     private CookbookConnector connector;
@@ -63,13 +57,18 @@ public class DataSenseResolver {
      */
     @MetaDataRetriever
     public MetaData getMetaData(@NotNull final MetaDataKey key) throws Exception {
+        return createMetaData(key);
+    }
+
+    @MetaDataOutputRetriever
+    public MetaData getOutputMetaData(final MetaDataKey key) throws Exception {
+        return createMetaData(key);
+    }
+
+    private DefaultMetaData createMetaData(final MetaDataKey key) throws Exception {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
-        // Since our model is static and we can simply create the pojo model.
-        //CookBookEntity entity = (CookBookEntity) Class.forName("com.cookbook.tutorial.service." + key.getId()).newInstance();
-
         CookBookEntity entity = EntityType.getClassFromType(EntityType.find(key.getId()));
-
         Description description = getConnector().getConfig().getClient().describeEntity(entity);
 
         DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key.getId());

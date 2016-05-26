@@ -9,7 +9,7 @@ import com.cookbook.tutorial.service.InvalidTokenException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
-import org.mule.modules.cookbook.config.OAuthConfig;
+import org.mule.modules.cookbook.config.OAuth2Config;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
 import java.util.Properties;
@@ -19,14 +19,14 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class OAuthConfigTestCases {
+public class OAuth2ConfigTestCases {
 
-    private OAuthConfig config;
+    private OAuth2Config config;
 
     @Before
     public void setUp() throws Exception {
         final Properties props = ConfigurationUtils.getAutomationCredentialsProperties();
-        config = new OAuthConfig();
+        config = new OAuth2Config();
         config.setAddress(props.getProperty("config.address"));
         config.setConsumerKey(props.getProperty("oauth.consumerKey"));
         config.setConsumerSecret(props.getProperty("oauth.consumerSecret"));

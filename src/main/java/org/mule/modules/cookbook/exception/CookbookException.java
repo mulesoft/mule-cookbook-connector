@@ -1,9 +1,6 @@
 package org.mule.modules.cookbook.exception;
 
-/**
- * Created by corar on 24/05/16.
- */
-public class CookbookException extends RuntimeException {
+public class CookbookException extends Exception {
 
     private static final long serialVersionUID = 1L;
 

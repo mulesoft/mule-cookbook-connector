@@ -12,6 +12,7 @@ import com.cookbook.tutorial.service.Recipe;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mule.modules.cookbook.exception.CookbookException;
 import org.mule.modules.cookbook.utils.EntityType;
 import org.mule.tools.devkit.ctf.configuration.DeploymentProfiles;
 import org.mule.tools.devkit.ctf.junit.RunOnlyOn;
@@ -25,13 +26,13 @@ public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
     private Integer recipeId;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testData = TestDataBuilder.getRecentlyAddedTestData();
     }
 
     @Test
     @RunOnlyOn(profiles = DeploymentProfiles.embedded)
-    public void testGetRecentlyAdded() {
+    public void testGetRecentlyAdded() throws CookbookException {
         List<Recipe> recipes = getConnector().getRecentlyAdded();
         assertThat(recipes, notNullValue());
         if(recipes.isEmpty()){

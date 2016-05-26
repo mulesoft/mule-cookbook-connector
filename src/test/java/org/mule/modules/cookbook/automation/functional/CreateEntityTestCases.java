@@ -6,13 +6,11 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.Ingredient;
 import com.cookbook.tutorial.service.InvalidEntityException;
-import com.cookbook.tutorial.service.SessionExpiredException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,20 +21,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class CreateTestCases extends AbstractTestCases {
+public class CreateEntityTestCases extends AbstractTestCases {
 
-    private static final Logger logger = LoggerFactory.getLogger(CreateTestCases.class);
+    private static final Logger logger = LoggerFactory.getLogger(CreateEntityTestCases.class);
 
     private Map<String, Object> testData;
     private Integer entityId;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testData = TestDataBuilder.createTestData();
     }
 
     @Test
-    public void testCreate() throws InvalidEntityException, SessionExpiredException {
+    public void testCreate() throws CookbookException {
         Map<String, Object> testEntity = (Map<String, Object>)testData.get("entity-ref");
         final CookBookEntity createdEntity = getConnector().create(EntityType.find((String)testData.get("type")), testEntity);
         entityId = createdEntity.getId();
@@ -45,13 +43,25 @@ public class CreateTestCases extends AbstractTestCases {
         assertThat(((Ingredient)createdEntity).getQuantity(), equalTo(Double.valueOf((String)testEntity.get("quantity"))));
     }
 
+    @Test
+    public void testCreateInvalidEntityWithId() throws CookbookException {
+        testData = TestDataBuilder.createWithIdTestData();
+        Map<String, Object> testEntity = (Map<String, Object>)testData.get("entity-ref");
+        try{
+            getConnector().create(EntityType.find((String)testData.get("type")), testEntity);
+        } catch(CookbookException e){
+            assertThat(e.getCause(), instanceOf(InvalidEntityException.class));
+            assertThat(e.getCause().getMessage(), containsString("Cannot specify Id at creation"));
+        }
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateInvalidEntity() throws InvalidEntityException, SessionExpiredException {
+    public void testCreateInvalidEntityType() throws CookbookException {
         getConnector().create(EntityType.RECIPE, (Map<String, Object>)testData.get("entity-ref"));
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityId != null) {
             try {
                 getConnector().delete(entityId);

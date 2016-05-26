@@ -9,12 +9,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mule.modules.cookbook.automation.system.BasicConfigTestCases;
-import org.mule.modules.cookbook.automation.system.OAuthConfigTestCases;
+import org.mule.modules.cookbook.automation.system.OAuth2ConfigTestCases;
 
 @RunWith(Suite.class)
 @SuiteClasses({
         BasicConfigTestCases.class,
-        OAuthConfigTestCases.class
+        OAuth2ConfigTestCases.class
 })
 public class SystemTestSuite {
 

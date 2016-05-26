@@ -6,27 +6,22 @@
 package org.mule.modules.cookbook.pagination;
 
 import com.cookbook.tutorial.service.CookBookEntity;
-import com.cookbook.tutorial.service.InvalidEntityException;
 import com.cookbook.tutorial.service.InvalidRequestException;
 import com.cookbook.tutorial.service.SessionExpiredException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.api.MuleException;
 import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.modules.cookbook.exception.CookbookException;
 import org.mule.streaming.PagingConfiguration;
 import org.mule.streaming.ProviderAwarePagingDelegate;
 
 import java.util.List;
-import java.util.Map;
 
-public class CookbookPagingDelegate extends ProviderAwarePagingDelegate<CookBookEntity, CookbookConnector> {
+public class QueryPagingDelegate extends ProviderAwarePagingDelegate<CookBookEntity, CookbookConnector> {
 
     private final String query;
     private final Integer pageSize;
     private Integer currentPage = 0;
 
-    public CookbookPagingDelegate(String query, final PagingConfiguration pagingConfiguration) {
+    public QueryPagingDelegate(String query, final PagingConfiguration pagingConfiguration) {
         super();
         this.query = query;
         this.pageSize = pagingConfiguration.getFetchSize();

@@ -8,7 +8,7 @@ package org.mule.modules.cookbook.automation.system;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
-import org.mule.modules.cookbook.config.Config;
+import org.mule.modules.cookbook.config.BasicAuthConfig;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
 import java.util.Properties;
@@ -19,14 +19,14 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class BasicConfigTestCases {
 
-    private Config config;
+    private BasicAuthConfig config;
     private String username;
     private String password;
 
     @Before
     public void setUp() throws Exception {
         final Properties props = ConfigurationUtils.getAutomationCredentialsProperties();
-        config = new Config();
+        config = new BasicAuthConfig();
         config.setAddress(props.getProperty("config.address"));
         username = props.getProperty("config.username");
         password = props.getProperty("config.password");
