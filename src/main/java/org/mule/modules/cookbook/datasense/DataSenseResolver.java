@@ -25,6 +25,7 @@ import org.mule.common.metadata.builder.DefaultMetaDataBuilder;
 import org.mule.common.metadata.builder.DynamicObjectBuilder;
 import org.mule.common.metadata.datatype.DataType;
 import org.mule.modules.cookbook.CookbookConnector;
+import org.mule.modules.cookbook.utils.EntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,10 @@ public class DataSenseResolver {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         // Since our model is static and we can simply create the pojo model.
-        CookBookEntity entity = (CookBookEntity) Class.forName("com.cookbook.tutorial.service." + key.getId()).newInstance();
+        //CookBookEntity entity = (CookBookEntity) Class.forName("com.cookbook.tutorial.service." + key.getId()).newInstance();
+
+        CookBookEntity entity = EntityType.getClassFromType(EntityType.find(key.getId()));
+
         Description description = getConnector().getConfig().getClient().describeEntity(entity);
 
         DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key.getId());

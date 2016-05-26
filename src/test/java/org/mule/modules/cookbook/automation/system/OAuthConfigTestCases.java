@@ -8,7 +8,7 @@ package org.mule.modules.cookbook.automation.system;
 import com.cookbook.tutorial.service.InvalidTokenException;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.module.ws.consumer.SoapFaultException;
+import org.mule.api.ConnectionException;
 import org.mule.modules.cookbook.config.OAuthConfig;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
@@ -34,42 +34,43 @@ public class OAuthConfigTestCases {
     }
 
     @Test
-    public void testValidCredentials() throws Exception {
+    public void testValidCredentials() throws ConnectionException {
         config.postAuthorize();
         config.testConnect();
         assertThat(config.getClient(), is(notNullValue()));
     }
 
     @Test
-    public void testEmptyAccessToken() throws Exception {
+    public void testEmptyAccessToken() {
         try{
             config.setAccessToken("");
             config.postAuthorize();
             config.testConnect();
-        } catch(RuntimeException e){
+        } catch(ConnectionException e){
             assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
     }
 
     @Test
-    public void testNullAccessToken() throws Exception {
+    public void testNullAccessToken() {
         try{
             config.setAccessToken(null);
             config.postAuthorize();
             config.testConnect();
-        } catch(RuntimeException e){
-            assertThat(e.getCause(), instanceOf(SoapFaultException.class));
+        } catch(ConnectionException e){
+            assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
     }
 
     @Test
-    public void testInvalidAccessToken() throws Exception {
+    public void testInvalidAccessToken() {
         try{
             config.setAccessToken("AAA1234567#123CCC");
             config.postAuthorize();
             config.testConnect();
-        } catch(RuntimeException e){
-            assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
+        } catch(ConnectionException e){
+            // the cause of the Exception or RuntimeException
+            assertThat(e.getCause().getCause(), instanceOf(InvalidTokenException.class));
         }
     }
 }

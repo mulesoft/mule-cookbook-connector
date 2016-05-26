@@ -1,8 +1,12 @@
 package org.mule.modules.cookbook.utils;
 
+import com.cookbook.tutorial.service.CookBookEntity;
+import org.jetbrains.annotations.NotNull;
+import org.mule.modules.cookbook.exception.CookbookException;
+
 public enum EntityType {
-    INGREDIENT("ingredient"),
-    RECIPE("recipe");
+    INGREDIENT("Ingredient"),
+    RECIPE("Recipe");
 
     private String displayName;
 
@@ -12,6 +16,14 @@ public enum EntityType {
 
     public static EntityType find(final String string) {
         return EnumUtils.getEnumFromString(EntityType.class, string);
+    }
+
+    public static CookBookEntity getClassFromType(@NotNull EntityType type) {
+        try {
+            return (CookBookEntity) Class.forName("com.cookbook.tutorial.service." + type.displayName).newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            throw new CookbookException(e);
+        }
     }
 
     @Override

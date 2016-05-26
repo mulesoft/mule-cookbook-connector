@@ -7,8 +7,7 @@ package org.mule.modules.cookbook.utils;
 
 public class EnumUtils {
 
-    private EnumUtils() {
-    }
+    private EnumUtils() { }
 
     public static <T extends Enum<T>> T getEnumFromString(final Class<T> enumType, final String string) {
         if (enumType != null && string != null) {
