@@ -5,9 +5,6 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.Ingredient;
 import com.cookbook.tutorial.service.InvalidEntityException;
@@ -20,6 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 
 public class CreateEntityTestCases extends AbstractTestCases {
 
@@ -36,7 +38,7 @@ public class CreateEntityTestCases extends AbstractTestCases {
     @Test
     public void testCreate() throws CookbookException {
         Map<String, Object> testEntity = (Map<String, Object>)testData.get("entity-ref");
-        final CookBookEntity createdEntity = getConnector().create(EntityType.find((String)testData.get("type")), testEntity);
+        final CookBookEntity createdEntity = getConnector().create((String)testData.get("type"), testEntity);
         entityId = createdEntity.getId();
         assertThat(createdEntity, instanceOf(Ingredient.class));
         assertThat((createdEntity).getName(), equalTo(testEntity.get("name")));
@@ -48,7 +50,7 @@ public class CreateEntityTestCases extends AbstractTestCases {
         testData = TestDataBuilder.createWithIdTestData();
         Map<String, Object> testEntity = (Map<String, Object>)testData.get("entity-ref");
         try{
-            getConnector().create(EntityType.find((String)testData.get("type")), testEntity);
+            getConnector().create((String)testData.get("type"), testEntity);
         } catch(CookbookException e){
             assertThat(e.getCause(), instanceOf(InvalidEntityException.class));
             assertThat(e.getCause().getMessage(), containsString("Cannot specify Id at creation"));
@@ -57,7 +59,7 @@ public class CreateEntityTestCases extends AbstractTestCases {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateInvalidEntityType() throws CookbookException {
-        getConnector().create(EntityType.RECIPE, (Map<String, Object>)testData.get("entity-ref"));
+        getConnector().create(EntityType.RECIPE.name(), (Map<String, Object>)testData.get("entity-ref"));
     }
 
     @After

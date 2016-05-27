@@ -5,12 +5,7 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-
 import com.cookbook.tutorial.service.Ingredient;
-import com.cookbook.tutorial.service.InvalidEntityException;
 import com.cookbook.tutorial.service.NoSuchEntityException;
 import com.cookbook.tutorial.service.UnitType;
 import org.junit.After;
@@ -20,6 +15,10 @@ import org.mule.modules.cookbook.exception.CookbookException;
 import org.mule.modules.cookbook.utils.EntityType;
 
 import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 
 public class UpdateEntityTestCases extends AbstractTestCases {
 
@@ -36,11 +35,11 @@ public class UpdateEntityTestCases extends AbstractTestCases {
         Double quantity = Double.valueOf((String)entityRef.get("quantity"));
         UnitType unit = UnitType.valueOf((String)entityRef.get("unit"));
 
-        Ingredient updated = (Ingredient)getConnector().update(EntityType.INGREDIENT, entityRef);
+        Ingredient updated = (Ingredient)getConnector().update(EntityType.INGREDIENT.name(), entityRef);
         assertThat(updated.getQuantity(), equalTo(quantity));
         assertThat(updated.getUnit(), equalTo(unit));
 
-        Ingredient newCurrent = (Ingredient)getConnector().get(EntityType.INGREDIENT, 1);
+        Ingredient newCurrent = (Ingredient)getConnector().get(EntityType.INGREDIENT.name(), 1);
         assertThat(newCurrent.getQuantity(), equalTo(quantity));
         assertThat(newCurrent.getUnit(), equalTo(unit));
     }
@@ -50,7 +49,7 @@ public class UpdateEntityTestCases extends AbstractTestCases {
         testData = TestDataBuilder.updateWithoutIdTestData();
         Map<String, Object> entityRef = (Map<String, Object>) testData.get("entity-ref");
         try{
-            getConnector().update(EntityType.INGREDIENT, entityRef);
+            getConnector().update(EntityType.INGREDIENT.name(), entityRef);
         } catch(CookbookException e){
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
@@ -58,7 +57,7 @@ public class UpdateEntityTestCases extends AbstractTestCases {
 
     @After
     public void tearDown() throws CookbookException {
-        getConnector().update(EntityType.INGREDIENT, TestDataBuilder.updateRollbackTestData());
+        getConnector().update(EntityType.INGREDIENT.name(), TestDataBuilder.updateRollbackTestData());
     }
 
 }

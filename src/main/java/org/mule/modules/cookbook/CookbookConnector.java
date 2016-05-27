@@ -6,11 +6,26 @@
 package org.mule.modules.cookbook;
 
 import com.cookbook.tutorial.client.ICookbookCallback;
-import com.cookbook.tutorial.service.*;
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.Description;
+import com.cookbook.tutorial.service.Ingredient;
+import com.cookbook.tutorial.service.InvalidEntityException;
+import com.cookbook.tutorial.service.InvalidTokenException;
+import com.cookbook.tutorial.service.NoSuchEntityException;
+import com.cookbook.tutorial.service.Recipe;
+import com.cookbook.tutorial.service.SessionExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
-import org.mule.api.annotations.*;
+import org.mule.api.annotations.Config;
+import org.mule.api.annotations.Connector;
+import org.mule.api.annotations.MetaDataScope;
+import org.mule.api.annotations.Paged;
+import org.mule.api.annotations.Processor;
+import org.mule.api.annotations.Query;
+import org.mule.api.annotations.ReconnectOn;
+import org.mule.api.annotations.Source;
+import org.mule.api.annotations.SourceStrategy;
 import org.mule.api.annotations.oauth.OAuthProtected;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.MetaDataKeyParam;
@@ -63,11 +78,11 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Create Entity")
-    public CookBookEntity create(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final EntityType type,
+    public CookBookEntity create(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type,
             @Default("#[payload]") @RefOnly final Map<String, Object> entity) throws CookbookException {
         Preconditions.checkNotNull(entity);
         try {
-            return config.getClient().create(getCookBookEntity(type, entity));
+            return config.getClient().create(getCookBookEntity(EntityType.find(type), entity));
         } catch(InvalidEntityException | SessionExpiredException e){
             throw new CookbookException(e);
         }
@@ -137,11 +152,11 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Describe Entity")
-    public Description describeEntity(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final EntityType type)
+    public Description describeEntity(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final String type)
             throws CookbookException {
         Preconditions.checkNotNull(type);
         try{
-            return config.getClient().describeEntity(EntityType.getClassFromType(type));
+            return config.getClient().describeEntity(EntityType.getClassFromType(EntityType.find(type)));
         } catch(InvalidTokenException | InvalidEntityException | NoSuchEntityException | SessionExpiredException e){
             throw new CookbookException(e);
         }
@@ -158,12 +173,20 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Get Entity")
-    public CookBookEntity get(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final EntityType type, @Default("1") final Integer id)
+    public CookBookEntity get(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final String type, @Default("1") final Integer id)
             throws CookbookException {
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(id);
         try{
-            return config.getClient().get(id);
+            CookBookEntity entity = config.getClient().get(id);
+            CookBookEntity entityClazz = EntityType.getClassFromType(EntityType.find(type));
+
+            if(entity.getClass() == entityClazz.getClass()){
+                return entity;
+            }
+            else{
+                throw new CookbookException("No entity of type " + type + " was found for ID " + id);
+            }
         } catch(NoSuchEntityException | SessionExpiredException e){
             throw new CookbookException(e);
         }
@@ -254,12 +277,12 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Update Entity")
-    public CookBookEntity update(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final EntityType type,
+    public CookBookEntity update(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type,
             @Default("#[payload]") @RefOnly final Map<String, Object> entity) throws CookbookException {
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(entity);
         try {
-            return config.getClient().update(getCookBookEntity(type, entity));
+            return config.getClient().update(getCookBookEntity(EntityType.find(type), entity));
         } catch(InvalidEntityException | NoSuchEntityException | SessionExpiredException e){
             throw new CookbookException(e);
         }

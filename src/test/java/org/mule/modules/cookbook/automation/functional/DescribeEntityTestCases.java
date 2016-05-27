@@ -12,7 +12,7 @@ public class DescribeEntityTestCases extends AbstractTestCases  {
 
     @Test
     public void testDescribeIngredient() throws CookbookException {
-        final Description description = getConnector().describeEntity(EntityType.INGREDIENT);
+        final Description description = getConnector().describeEntity(EntityType.INGREDIENT.name());
         assertThat(description, notNullValue());
     }
 

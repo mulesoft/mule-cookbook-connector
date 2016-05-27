@@ -5,9 +5,6 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import com.cookbook.tutorial.service.Recipe;
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +16,11 @@ import org.mule.tools.devkit.ctf.junit.RunOnlyOn;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
 
@@ -36,7 +38,7 @@ public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
         List<Recipe> recipes = getConnector().getRecentlyAdded();
         assertThat(recipes, notNullValue());
         if(recipes.isEmpty()){
-            getConnector().create(EntityType.RECIPE, (Map<String, Object>) testData.get("recipe-ref"));
+            getConnector().create(EntityType.RECIPE.name(), (Map<String, Object>) testData.get("recipe-ref"));
             recipes = getConnector().getRecentlyAdded();
             assertThat(recipes, notNullValue());
             assertThat(recipes.size(), is(1));

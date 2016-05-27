@@ -5,9 +5,6 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import com.cookbook.tutorial.service.Recipe;
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 public class GetRecentlyAddedRecipesSourceTestCases extends AbstractTestCases {
 
     Map<String, Object> testData;
@@ -27,7 +27,7 @@ public class GetRecentlyAddedRecipesSourceTestCases extends AbstractTestCases {
     public void setUp() throws Throwable {
         testData = TestDataBuilder.getRecentlyAddedTestData();
         getDispatcher().initializeSource("getRecentlyAddedSource", new Object[] { null });
-        getConnector().create(EntityType.RECIPE, (Map<String, Object>) testData.get("recipe-ref"));
+        getConnector().create(EntityType.RECIPE.name(), (Map<String, Object>) testData.get("recipe-ref"));
         Thread.sleep(2000);
     }
 
