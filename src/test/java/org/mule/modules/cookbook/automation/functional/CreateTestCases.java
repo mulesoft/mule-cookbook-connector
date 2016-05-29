@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 
-public class CreateEntityTestCases extends AbstractTestCases {
+public class CreateTestCases extends AbstractTestCases {
 
     private Map<String, Object> testData;
     private Integer entityId;

@@ -16,21 +16,20 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        CreateEntityTestCases.class,
-        CreateMultipleEntitiesTestCases.class,
-        DeleteEntityTestCases.class,
-        DeleteMultipleEntitiesTestCases.class,
+        CreateTestCases.class,
+        CreateMultipleTestCases.class,
+        DeleteTestCases.class,
+        DeleteMultipleTestCases.class,
         DescribeEntityTestCases.class,
         EntityMetaDataTestCases.class,
-        GetEntityTestCases.class,
         GetEntitiesTestCases.class,
-        GetMultipleEntitiesTestCases.class,
-        GetRecentlyAddedRecipesSourceTestCases.class,
-        GetRecentlyAddedRecipesTestCases.class,
-        QueryEntitiesTestCases.class,
-        UpdateEntityTestCases.class,
-        UpdateMultipleEntitiesTestCases.class
-})
+        GetTestCases.class,
+        GetMultipleTestCases.class,
+        GetRecentlyAddedSourceTestCases.class,
+        GetRecentlyAddedTestCases.class,
+        QueryTestCases.class,
+        UpdateTestCases.class,
+        UpdateMultipleTestCases.class })
 public class FunctionalTestSuite {
 
     @BeforeClass

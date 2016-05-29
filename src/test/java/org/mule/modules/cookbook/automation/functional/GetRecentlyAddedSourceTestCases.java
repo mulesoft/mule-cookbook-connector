@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class GetRecentlyAddedRecipesSourceTestCases extends AbstractTestCases {
+public class GetRecentlyAddedSourceTestCases extends AbstractTestCases {
 
     private List<Integer> entityIds = new ArrayList<>(0);
 

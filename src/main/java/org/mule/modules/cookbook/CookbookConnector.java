@@ -86,7 +86,7 @@ public class CookbookConnector {
             throws CookbookException {
         Preconditions.checkNotNull(entity);
         try {
-            return config.getClient().create(getCookBookEntity(EntityType.find(type), entity));
+            return config.getClient().create(convertToCookBookEntity(EntityType.find(type), entity));
         } catch (InvalidEntityException | SessionExpiredException e) {
             throw new CookbookException(e);
         }
@@ -104,7 +104,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Create Multiple Entities")
-    public List<CookBookEntity> createMultipleEntities(@RefOnly @Default("#[payload]") final List<CookBookEntity> entities) throws CookbookException {
+    public List<CookBookEntity> createMultiple(@RefOnly @Default("#[payload]") final List<CookBookEntity> entities) throws CookbookException {
         Preconditions.checkNotNull(entities);
         try {
             return config.getClient().addList(entities);
@@ -144,7 +144,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Delete Multiple Entities by ID")
-    public void deleteMultipleEntities(final List<Integer> entityIds) throws CookbookException {
+    public void deleteMultiple(final List<Integer> entityIds) throws CookbookException {
         Preconditions.checkNotNull(entityIds);
         try {
             config.getClient().deleteList(entityIds);
@@ -232,7 +232,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Get Multiple Entities by ID")
-    public List<CookBookEntity> getMultipleEntities(@RefOnly @Default("#[payload]") final List<Integer> entityIds) throws CookbookException {
+    public List<CookBookEntity> getMultiple(@RefOnly @Default("#[payload]") final List<Integer> entityIds) throws CookbookException {
         Preconditions.checkNotNull(entityIds);
         try {
             return config.getClient().getList(entityIds);
@@ -293,7 +293,7 @@ public class CookbookConnector {
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(entity);
         try {
-            return config.getClient().update(getCookBookEntity(EntityType.find(type), entity));
+            return config.getClient().update(convertToCookBookEntity(EntityType.find(type), entity));
         } catch (InvalidEntityException | NoSuchEntityException | SessionExpiredException e) {
             throw new CookbookException(e);
         }
@@ -311,8 +311,8 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Update Multiple Entities")
-    public List<CookBookEntity> updateMultipleEntities(
-            @MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) @RefOnly @Default("#[payload]") final List<CookBookEntity> entities) throws CookbookException {
+    public List<CookBookEntity> updateMultiple(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) @RefOnly @Default("#[payload]") final List<CookBookEntity> entities)
+            throws CookbookException {
         Preconditions.checkNotNull(entities);
         try {
             return config.getClient().updateList(entities);
@@ -337,7 +337,7 @@ public class CookbookConnector {
     @OAuthProtected
     @Processor(friendlyName = "Query Entities")
     @Paged
-    public ProviderAwarePagingDelegate<CookBookEntity, CookbookConnector> queryEntities(@Query final String query, @RefOnly final PagingConfiguration pagingConfiguration)
+    public ProviderAwarePagingDelegate<CookBookEntity, CookbookConnector> query(@Query final String query, @RefOnly final PagingConfiguration pagingConfiguration)
             throws CookbookException {
         Preconditions.checkNotNull(query);
         try {
@@ -356,19 +356,12 @@ public class CookbookConnector {
      * @param entity
      *            Map containing the parameters of the entity to be mapped.
      * @return A {@link CookBookEntity} object.
-     * @throws InvalidEntityException
-     *             If the provided entity type is invalid.
+     * @throws CookbookException
+     *             If the {@link CookBookEntity} cannot be generated from the given parameters.
      */
-    private CookBookEntity getCookBookEntity(@NotNull final EntityType type, @NotNull @Default("#[payload]") @RefOnly final Map<String, Object> entity)
-            throws InvalidEntityException {
-        ObjectMapper mapper = new ObjectMapper();
-        if (type == EntityType.RECIPE) {
-            return mapper.convertValue(entity, Recipe.class);
-        } else if (type == EntityType.INGREDIENT) {
-            return mapper.convertValue(entity, Ingredient.class);
-        } else {
-            throw new InvalidEntityException("Could not handle type:" + type);
-        }
+    private CookBookEntity convertToCookBookEntity(@NotNull final EntityType type, @NotNull @RefOnly @Default("#[payload]") final Map<String, Object> entity)
+            throws CookbookException {
+        return new ObjectMapper().convertValue(entity, EntityType.getClassFromType(type).getClass());
     }
 
 }

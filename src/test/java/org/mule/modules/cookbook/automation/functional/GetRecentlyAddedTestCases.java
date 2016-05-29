@@ -6,6 +6,7 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.Recipe;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,16 +19,17 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
+public class GetRecentlyAddedTestCases extends AbstractTestCases {
 
     private Integer entityId;
 
     @Before
     public void setUp() throws CookbookException {
-        getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData());
+        entityId = getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData()).getId();
     }
 
     @After
@@ -40,9 +42,8 @@ public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
     public void testGetRecentlyAdded() throws CookbookException {
         List<Recipe> recipes = getConnector().getRecentlyAdded();
         assertThat(recipes, notNullValue());
-        assertThat(recipes.size(), is(1));
-        assertThat(recipes.get(0).getName(), equalTo("Pineapple Raita"));
-        entityId = recipes.get(0).getId();
+        assertThat(recipes.size(), greaterThan(0));
+        assertThat(recipes, Matchers.<Recipe> hasItem(hasProperty("id", equalTo(entityId))));
     }
 
 }

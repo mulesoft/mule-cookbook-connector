@@ -34,7 +34,7 @@ public abstract class AbstractTestCases extends AbstractTestCase<CookbookConnect
     protected void silentlyDelete(List<Integer> ids) {
         if (ids != null) {
             try {
-                getConnector().deleteMultipleEntities(ids);
+                getConnector().deleteMultiple(ids);
             } catch (CookbookException e) {
                 logger.warn("Couldn't delete program for id: {}", ids, e);
             }

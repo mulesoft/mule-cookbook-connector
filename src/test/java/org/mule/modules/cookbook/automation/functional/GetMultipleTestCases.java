@@ -17,11 +17,11 @@ import org.mule.modules.cookbook.exception.CookbookException;
 import java.util.Arrays;
 import java.util.List;
 
-public class GetMultipleEntitiesTestCases extends AbstractTestCases {
+public class GetMultipleTestCases extends AbstractTestCases {
 
     @Test
     public void testGetMultipleEntities() throws CookbookException {
-        List<CookBookEntity> entities = getConnector().getMultipleEntities(Arrays.asList(TestDataBuilder.getMultipleEntitiesIDs()));
+        List<CookBookEntity> entities = getConnector().getMultiple(Arrays.asList(TestDataBuilder.getMultipleEntitiesIDs()));
         assertThat(entities, notNullValue());
         assertThat(entities.size(), is(5));
     }
@@ -29,7 +29,7 @@ public class GetMultipleEntitiesTestCases extends AbstractTestCases {
     @Test
     public void testGetMultipleNonExistentEntities() throws CookbookException {
         try {
-            getConnector().getMultipleEntities(Arrays.asList(TestDataBuilder.getMultipleInvalidEntitiesIDs()));
+            getConnector().getMultiple(Arrays.asList(TestDataBuilder.getMultipleInvalidEntitiesIDs()));
         } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }

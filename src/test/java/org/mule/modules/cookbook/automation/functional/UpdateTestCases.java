@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
-public class UpdateEntityTestCases extends AbstractTestCases {
+public class UpdateTestCases extends AbstractTestCases {
 
     private Integer entityId;
 

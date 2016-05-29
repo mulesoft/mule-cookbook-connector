@@ -20,11 +20,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.fail;
 
-public class QueryEntitiesTestCases extends AbstractTestCases {
+public class QueryTestCases extends AbstractTestCases {
 
     @Test
     public void testQueryIngredients() throws Throwable {
-        final Collection<CookBookEntity> entities = (Collection<CookBookEntity>) getDispatcher().runPaginatedMethod("queryEntities", new Object[] {
+        final Collection<CookBookEntity> entities = (Collection<CookBookEntity>) getDispatcher().runPaginatedMethod("query", new Object[] {
                 "GET ALL FROM INGREDIENT",
                 new PagingConfiguration(10) });
         assertThat(CollectionUtils.isEmpty(entities), is(false));
@@ -34,7 +34,7 @@ public class QueryEntitiesTestCases extends AbstractTestCases {
     @Test
     public void testInvalidQuery() throws Throwable {
         try {
-            getDispatcher().runPaginatedMethod("queryEntities", new Object[] {
+            getDispatcher().runPaginatedMethod("query", new Object[] {
                     "SOME INVALID QUERY",
                     new PagingConfiguration(10) });
             fail();

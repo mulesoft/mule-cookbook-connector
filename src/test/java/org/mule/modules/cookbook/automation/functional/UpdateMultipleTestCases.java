@@ -23,14 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class UpdateMultipleEntitiesTestCases extends AbstractTestCases {
+public class UpdateMultipleTestCases extends AbstractTestCases {
 
     private List<CookBookEntity> createdEntities;
     private List<Integer> entityIds;
 
     @Before
     public void setUp() throws CookbookException {
-        createdEntities = getConnector().createMultipleEntities(TestDataBuilder.createMultipleEntitiesData());
+        createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
         entityIds = Lists.transform(createdEntities, new Function<CookBookEntity, Integer>() {
 
             @Override
@@ -65,7 +65,7 @@ public class UpdateMultipleEntitiesTestCases extends AbstractTestCases {
         }));
 
         // update
-        List<CookBookEntity> updatedEntities = getConnector().updateMultipleEntities(Lists.newArrayList(transformedEntities));
+        List<CookBookEntity> updatedEntities = getConnector().updateMultiple(Lists.newArrayList(transformedEntities));
 
         // fetch single ingredient
         Ingredient charqui = (Ingredient) Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {

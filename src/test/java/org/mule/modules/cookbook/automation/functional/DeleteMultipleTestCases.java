@@ -19,13 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.fail;
 
-public class DeleteMultipleEntitiesTestCases extends AbstractTestCases {
+public class DeleteMultipleTestCases extends AbstractTestCases {
 
     private List<Integer> entityIds;
 
     @Before
     public void setUp() throws CookbookException {
-        List<CookBookEntity> createdEntities = getConnector().createMultipleEntities(TestDataBuilder.createMultipleEntitiesData());
+        List<CookBookEntity> createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
         entityIds = Lists.transform(createdEntities, new Function<CookBookEntity, Integer>() {
 
             @Override
@@ -37,9 +37,9 @@ public class DeleteMultipleEntitiesTestCases extends AbstractTestCases {
 
     @Test
     public void testDeleteMultipleIngredients() throws CookbookException {
-        getConnector().deleteMultipleEntities(entityIds);
+        getConnector().deleteMultiple(entityIds);
         try {
-            getConnector().getMultipleEntities(entityIds);
+            getConnector().getMultiple(entityIds);
             fail();
         } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
@@ -51,7 +51,7 @@ public class DeleteMultipleEntitiesTestCases extends AbstractTestCases {
         try {
             List<Integer> copyOfIds = Lists.newArrayList(entityIds);
             copyOfIds.add(-1);
-            getConnector().deleteMultipleEntities(copyOfIds);
+            getConnector().deleteMultiple(copyOfIds);
             fail();
         } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));

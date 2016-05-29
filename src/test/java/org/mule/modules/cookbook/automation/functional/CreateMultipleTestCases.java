@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class CreateMultipleEntitiesTestCases extends AbstractTestCases {
+public class CreateMultipleTestCases extends AbstractTestCases {
 
     private List<Integer> entityIds;
 
@@ -31,7 +31,7 @@ public class CreateMultipleEntitiesTestCases extends AbstractTestCases {
 
     @Test
     public void testCreateMultipleIngredients() throws CookbookException {
-        final List<CookBookEntity> entities = getConnector().createMultipleEntities(TestDataBuilder.createMultipleEntitiesData());
+        final List<CookBookEntity> entities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
         assertThat(entities, notNullValue());
         assertThat(entities.size(), is(4));
         entityIds = Lists.transform(entities, new Function<CookBookEntity, Integer>() {

@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.fail;
 
-public class DeleteEntityTestCases extends AbstractTestCases {
+public class DeleteTestCases extends AbstractTestCases {
 
     private Integer entityId;
 
