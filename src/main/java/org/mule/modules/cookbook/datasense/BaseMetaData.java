@@ -33,7 +33,7 @@ public class BaseMetaData {
             if (field.getInnerType().equals("String")) {
                 objectBuilder.addList(field.getName()).ofSimpleField(DataType.STRING);
             } else if (field.getInnerType().equals("Ingredient")) {
-                DynamicObjectBuilder<?> innerObject = objectBuilder.addList(field.getName()).ofDynamicObject("ingredients");
+                DynamicObjectBuilder<?> innerObject = objectBuilder.addList(field.getName()).ofDynamicObject("Ingredient");
                 Description ingredientDescription = connector.describeEntity(EntityType.INGREDIENT.name());
                 for (Description innerField : ingredientDescription.getInnerFields()) {
                     getType(innerObject, innerField.getDataType().name(), innerField.getName());

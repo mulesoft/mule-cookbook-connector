@@ -26,12 +26,12 @@ public class GetEntityTestCases extends AbstractTestCases {
 
     @Before
     public void setUp() {
-        testData = TestDataBuilder.getTestData();
+        testData = TestDataBuilder.getIngredientData();
     }
 
     @Test
     public void testGetIngredient() throws CookbookException {
-        final CookBookEntity entity = getConnector().get((String) testData.get("type"), (Integer) testData.get("id"));
+        final CookBookEntity entity = getConnector().get(EntityType.INGREDIENT.name(), (Integer) testData.get("id"));
         assertThat(entity, instanceOf(Ingredient.class));
         assertThat(entity.getName(), equalTo(testData.get("name")));
     }

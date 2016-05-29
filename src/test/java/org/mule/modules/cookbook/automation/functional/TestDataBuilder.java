@@ -5,30 +5,42 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.Ingredient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import java.util.List;
 import java.util.Map;
 
 public class TestDataBuilder {
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     private TestDataBuilder() {
         // No instances of this class allowed
     }
 
-    public static Map<String, Object> createTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
+    public static Map<String, Object> createIngredientData() {
+        return ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0");
     }
 
-    public static Map<String, Object> createWithIdTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("id", 1, "name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
+    public static Map<String, Object> createWithIdData() {
+        return ImmutableMap.<String, Object> of("id", 1, "name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0");
     }
 
-    public static Map<String, Object> deleteTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0"));
+    public static List<CookBookEntity> createMultipleEntitiesData() {
+        return ImmutableList.<CookBookEntity> of(
+                mapper.convertValue(ImmutableMap.<String, Object> of("name", "Charqui", "unit", "KILOGRAMS", "quantity", "2.0"), Ingredient.class),
+                mapper.convertValue(ImmutableMap.<String, Object> of("name", "Hondashi", "unit", "UNIT", "quantity", "10.0"), Ingredient.class),
+                mapper.convertValue(ImmutableMap.<String, Object> of("name", "Miso", "unit", "KILOGRAMS", "quantity", "1.0"), Ingredient.class),
+                mapper.convertValue(ImmutableMap.<String, Object> of("name", "Nori", "unit", "UNIT", "quantity", "50.0"), Ingredient.class)
+        );
     }
 
-    public static Map<String, Object> getTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "id", 1, "name", "Extra Lean Ground Beef");
+    public static Map<String, Object> getIngredientData() {
+        return ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef");
     }
 
     public static Integer[] getMultipleEntitiesIDs() {
@@ -39,8 +51,7 @@ public class TestDataBuilder {
         return new Integer[]{1, 2, -3, -4, -959};
     }
 
-
-    public static Map<String, Object> getRecentlyAddedTestData() {
+    public static Map<String, Object> getRecentlyAddedRecipeData() {
         ImmutableList directions = ImmutableList. of(
                 "Whip the curd till its smooth.",
                 "Mix well.",
@@ -60,32 +71,21 @@ public class TestDataBuilder {
                 ImmutableMap.<String, Object> of("name", "Coriander Leaves", "unit", "UNIT", "quantity", "3"),
                 ImmutableMap.<String, Object> of("name", "Black Salt/Rock Salt", "unit", "SPOONS", "quantity", "1"));
 
-        ImmutableMap recipe = ImmutableMap.<String, Object> of(
-                "cookTime", "55.0",
-                "directions", directions,
-                "ingredients", ingredients,
-                "prepTime", "15.0"
-        );
-
-        return ImmutableMap.<String, Object> of(
-                "type", "recipe",
-                "recipe-ref", recipe);
+        return ImmutableMap.<String, Object> builder()
+                .put("name", "Pineapple Raita")
+                .put("cookTime", "55.0")
+                .put("directions", directions)
+                .put("ingredients", ingredients)
+                .put("prepTime","15.0")
+                .build();
     }
 
-    public static Map<String, Object> queryPaginatedTestData() {
-        return ImmutableMap.<String, Object> of("query", "GET ALL FROM INGREDIENT", "fetchSize", "10");
+    public static Map<String, Object> updateIngredientData() {
+        return ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8");
     }
 
-    public static Map<String, Object> updateTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8"));
-    }
-
-    public static Map<String, Object> updateWithoutIdTestData() {
-        return ImmutableMap.<String, Object> of("type", "ingredient", "entity-ref", ImmutableMap.<String, Object> of("name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8"));
-    }
-
-    public static Map<String, Object> updateRollbackTestData() {
-        return ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "GRAMS", "quantity", "1.0");
+    public static Map<String, Object> updateIngredientWithoutIdData() {
+        return ImmutableMap.<String, Object> of("name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8");
     }
 
 }

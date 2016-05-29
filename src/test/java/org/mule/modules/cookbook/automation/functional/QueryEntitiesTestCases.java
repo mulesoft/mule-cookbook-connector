@@ -5,34 +5,28 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.IsNull.notNullValue;
-
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.InvalidRequestException;
 import com.google.common.collect.Iterables;
-import org.junit.Before;
 import org.junit.Test;
 import org.mule.streaming.PagingConfiguration;
 import org.mule.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collection;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.fail;
 
 public class QueryEntitiesTestCases extends AbstractTestCases {
-
-    Map<String, Object> testData;
-
-    @Before
-    public void setUp() {
-        testData = TestDataBuilder.queryPaginatedTestData();
-    }
 
     @Test
     public void testQueryIngredients() throws Throwable {
         final Collection<CookBookEntity> entities = (Collection<CookBookEntity>) getDispatcher().runPaginatedMethod("queryEntities", new Object[] {
-                testData.get("query"),
-                new PagingConfiguration(Integer.parseInt((String) testData.get("fetchSize")))
+                "GET ALL FROM INGREDIENT",
+                new PagingConfiguration(10)
         });
         assertThat(CollectionUtils.isEmpty(entities), is(false));
         assertThat(Iterables.getFirst(entities, null), notNullValue());
@@ -42,9 +36,10 @@ public class QueryEntitiesTestCases extends AbstractTestCases {
     public void testInvalidQuery() throws Throwable {
         try{
             getDispatcher().runPaginatedMethod("queryEntities", new Object[] {
-                    "SOME QUERY",
-                    new PagingConfiguration(Integer.parseInt((String) testData.get("fetchSize")))
+                    "SOME INVALID QUERY",
+                    new PagingConfiguration(10)
             });
+            fail();
         }
         catch(Throwable e){
             assertThat(e.getCause(), instanceOf(InvalidRequestException.class));

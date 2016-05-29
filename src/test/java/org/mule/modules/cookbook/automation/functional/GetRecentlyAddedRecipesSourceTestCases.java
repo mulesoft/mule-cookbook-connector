@@ -13,39 +13,37 @@ import org.mule.modules.cookbook.utils.EntityType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class GetRecentlyAddedRecipesSourceTestCases extends AbstractTestCases {
 
-    Map<String, Object> testData;
-    List<Integer> recipeIds = new ArrayList<>(0);
+    private List<Integer> entityIds = new ArrayList<>(0);
 
     @Before
     public void setUp() throws Throwable {
-        testData = TestDataBuilder.getRecentlyAddedTestData();
         getDispatcher().initializeSource("getRecentlyAddedSource", new Object[] { null });
-        getConnector().create(EntityType.RECIPE.name(), (Map<String, Object>) testData.get("recipe-ref"));
+        getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData());
         Thread.sleep(2000);
-    }
-
-    @Test
-    public void testGetRecentlyAddedSource() {
-            List<Object> sources = getDispatcher().getSourceMessages("getRecentlyAddedSource");
-            assertThat(sources.isEmpty(), is(false));
-            List<Recipe> recipes = (List<Recipe>) sources.get(0);
-            for (Object recipe : recipes) {
-                recipeIds.add(((Recipe) recipe).getId());
-            }
     }
 
     @After
     public void tearDown() throws Throwable {
-        for (Integer id : recipeIds) {
-            getConnector().delete(id);
-        }
+        silentlyDelete(entityIds);
         getDispatcher().shutDownSource("getRecentlyAddedSource");
     }
+
+    @Test
+    public void testGetRecentlyAddedSource() {
+        List<Object> sources = getDispatcher().getSourceMessages("getRecentlyAddedSource");
+        assertThat(sources, notNullValue());
+        assertThat(sources.size(), greaterThan(0));
+        List<Recipe> recipes = (List<Recipe>) sources.get(0);
+        for (Object recipe : recipes) {
+            entityIds.add(((Recipe) recipe).getId());
+        }
+    }
+
 }

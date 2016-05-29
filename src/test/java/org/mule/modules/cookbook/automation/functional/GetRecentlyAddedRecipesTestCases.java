@@ -15,21 +15,24 @@ import org.mule.tools.devkit.ctf.configuration.DeploymentProfiles;
 import org.mule.tools.devkit.ctf.junit.RunOnlyOn;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
 
-    private Map<String, Object> testData;
-    private Integer recipeId;
+    private Integer entityId;
 
     @Before
-    public void setUp() {
-        testData = TestDataBuilder.getRecentlyAddedTestData();
+    public void setUp() throws CookbookException {
+        getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        silentlyDelete(entityId);
     }
 
     @Test
@@ -37,20 +40,9 @@ public class GetRecentlyAddedRecipesTestCases extends AbstractTestCases {
     public void testGetRecentlyAdded() throws CookbookException {
         List<Recipe> recipes = getConnector().getRecentlyAdded();
         assertThat(recipes, notNullValue());
-        if(recipes.isEmpty()){
-            getConnector().create(EntityType.RECIPE.name(), (Map<String, Object>) testData.get("recipe-ref"));
-            recipes = getConnector().getRecentlyAdded();
-            assertThat(recipes, notNullValue());
-            assertThat(recipes.size(), is(1));
-            recipeId = recipes.get(0).getId();
-        }
-        assertThat(recipes.size(), greaterThan(0));
+        assertThat(recipes.size(), is(1));
+        assertThat(recipes.get(0).getName(), equalTo("Pineapple Raita"));
+        entityId = recipes.get(0).getId();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        if (recipeId != null) {
-            getConnector().delete(recipeId);
-        }
-    }
 }

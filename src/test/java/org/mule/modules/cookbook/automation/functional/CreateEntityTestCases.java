@@ -13,8 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.exception.CookbookException;
 import org.mule.modules.cookbook.utils.EntityType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -25,32 +23,33 @@ import static org.hamcrest.Matchers.instanceOf;
 
 public class CreateEntityTestCases extends AbstractTestCases {
 
-    private static final Logger logger = LoggerFactory.getLogger(CreateEntityTestCases.class);
-
     private Map<String, Object> testData;
     private Integer entityId;
 
     @Before
     public void setUp() {
-        testData = TestDataBuilder.createTestData();
+        testData = TestDataBuilder.createIngredientData();
+    }
+
+    @After
+    public void tearDown() {
+        silentlyDelete(entityId);
     }
 
     @Test
-    public void testCreate() throws CookbookException {
-        Map<String, Object> testEntity = (Map<String, Object>)testData.get("entity-ref");
-        final CookBookEntity createdEntity = getConnector().create((String)testData.get("type"), testEntity);
+    public void testCreateIngredient() throws CookbookException {
+        final CookBookEntity createdEntity = getConnector().create(EntityType.INGREDIENT.name(), testData);
         entityId = createdEntity.getId();
         assertThat(createdEntity, instanceOf(Ingredient.class));
-        assertThat((createdEntity).getName(), equalTo(testEntity.get("name")));
-        assertThat(((Ingredient)createdEntity).getQuantity(), equalTo(Double.valueOf((String)testEntity.get("quantity"))));
+        assertThat((createdEntity).getName(), equalTo(testData.get("name")));
+        assertThat(((Ingredient)createdEntity).getQuantity(), equalTo(Double.valueOf((String)testData.get("quantity"))));
     }
 
     @Test
-    public void testCreateInvalidEntityWithId() throws CookbookException {
-        testData = TestDataBuilder.createWithIdTestData();
-        Map<String, Object> testEntity = (Map<String, Object>)testData.get("entity-ref");
+    public void testCreateIngredientWithInvalidIdParam() throws CookbookException {
+        testData = TestDataBuilder.createWithIdData();
         try{
-            getConnector().create((String)testData.get("type"), testEntity);
+            getConnector().create(EntityType.INGREDIENT.name(), testData);
         } catch(CookbookException e){
             assertThat(e.getCause(), instanceOf(InvalidEntityException.class));
             assertThat(e.getCause().getMessage(), containsString("Cannot specify Id at creation"));
@@ -59,17 +58,7 @@ public class CreateEntityTestCases extends AbstractTestCases {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateInvalidEntityType() throws CookbookException {
-        getConnector().create(EntityType.RECIPE.name(), (Map<String, Object>)testData.get("entity-ref"));
+        getConnector().create(EntityType.RECIPE.name(), testData);
     }
 
-    @After
-    public void tearDown() {
-        if (entityId != null) {
-            try {
-                getConnector().delete(entityId);
-            } catch (CookbookException e) {
-                logger.warn("Couldn't delete program for id: {}", entityId, e);
-            }
-        }
-    }
 }

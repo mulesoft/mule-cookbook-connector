@@ -18,6 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.*;
 
 public class OAuth2ConfigTestCases {
 
@@ -46,6 +47,7 @@ public class OAuth2ConfigTestCases {
             config.setAccessToken("");
             config.postAuthorize();
             config.testConnect();
+            fail();
         } catch(ConnectionException e){
             assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
@@ -57,6 +59,7 @@ public class OAuth2ConfigTestCases {
             config.setAccessToken(null);
             config.postAuthorize();
             config.testConnect();
+            fail();
         } catch(ConnectionException e){
             assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
@@ -68,6 +71,7 @@ public class OAuth2ConfigTestCases {
             config.setAccessToken("AAA1234567#123CCC");
             config.postAuthorize();
             config.testConnect();
+            fail();
         } catch(ConnectionException e){
             // the cause of the Exception or RuntimeException
             assertThat(e.getCause().getCause(), instanceOf(InvalidTokenException.class));

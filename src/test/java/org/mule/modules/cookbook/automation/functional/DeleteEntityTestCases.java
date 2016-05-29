@@ -11,20 +11,17 @@ import org.junit.Test;
 import org.mule.modules.cookbook.exception.CookbookException;
 import org.mule.modules.cookbook.utils.EntityType;
 
-import java.util.Map;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.fail;
 
 public class DeleteEntityTestCases extends AbstractTestCases {
 
-    private Map<String, Object> testData;
     private Integer entityId;
 
     @Before
     public void setUp() throws CookbookException {
-        testData = TestDataBuilder.deleteTestData();
-        entityId = getConnector().create((String)testData.get("type"), (Map<String, Object>)testData.get("entity-ref")).getId();
+        entityId = getConnector().create(EntityType.INGREDIENT.name(), TestDataBuilder.createIngredientData()).getId();
     }
 
     @Test
@@ -32,6 +29,7 @@ public class DeleteEntityTestCases extends AbstractTestCases {
         getConnector().delete(entityId);
         try{
             getConnector().get(EntityType.INGREDIENT.name(), entityId);
+            fail();
         } catch(CookbookException e){
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
@@ -41,6 +39,7 @@ public class DeleteEntityTestCases extends AbstractTestCases {
     public void testDeleteEntityNotFound() {
         try{
             getConnector().delete(-1);
+            fail();
         } catch(CookbookException e){
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }

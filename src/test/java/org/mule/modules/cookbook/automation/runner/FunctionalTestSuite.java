@@ -17,10 +17,10 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 @RunWith(Suite.class)
 @SuiteClasses({
         CreateEntityTestCases.class,
-        //CreateMultipleEntitiesTestCases.class,
+        CreateMultipleEntitiesTestCases.class,
         DeleteEntityTestCases.class,
-        //DeleteMultipleEntitiesTestCases.class,
-        //DescribeEntityTestCases.class,
+        DeleteMultipleEntitiesTestCases.class,
+        DescribeEntityTestCases.class,
         EntityMetaDataTestCases.class,
         GetEntityTestCases.class,
         GetEntitiesTestCases.class,
@@ -29,7 +29,7 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
         GetRecentlyAddedRecipesTestCases.class,
         QueryEntitiesTestCases.class,
         UpdateEntityTestCases.class,
-        //UpdateMultipleEntitiesTestCases.class
+        UpdateMultipleEntitiesTestCases.class
 })
 public class FunctionalTestSuite {
 

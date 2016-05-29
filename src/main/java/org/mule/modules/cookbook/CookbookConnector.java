@@ -5,7 +5,6 @@
  */
 package org.mule.modules.cookbook;
 
-import com.cookbook.tutorial.client.ICookbookCallback;
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.Description;
 import com.cookbook.tutorial.service.Ingredient;
@@ -39,6 +38,8 @@ import org.mule.modules.cookbook.pagination.QueryPagingDelegate;
 import org.mule.modules.cookbook.utils.EntityType;
 import org.mule.streaming.PagingConfiguration;
 import org.mule.streaming.ProviderAwarePagingDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,8 @@ import java.util.Map;
 @MetaDataScope(EntityMetaData.class)
 public class CookbookConnector {
 
+    private static final Logger logger = LoggerFactory.getLogger(CookbookConnector.class);
+
     @Config
     private AbstractConfig config;
 
@@ -68,7 +71,7 @@ public class CookbookConnector {
     }
 
     /**
-     * Allows the caller to creates a new Ingredient or Recipe.
+     * Allows the caller to create   a new Ingredient or Recipe.
      * <p/>
      *
      * @param type   Type of entity: {@link Ingredient} or {@link Recipe}.
@@ -98,7 +101,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Create Multiple Entities")
-    public List<CookBookEntity> createMultipleEntities(@Default("#[payload]") @RefOnly final List<CookBookEntity> entities) throws CookbookException {
+    public List<CookBookEntity> createMultipleEntities(@RefOnly @Default("#[payload]") final List<CookBookEntity> entities) throws CookbookException {
         Preconditions.checkNotNull(entities);
         try{
             return config.getClient().addList(entities);
@@ -216,7 +219,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Get Multiple Entities by ID")
-    public List<CookBookEntity> getMultipleEntities(@Default("#[payload]") @RefOnly final List<Integer> entityIds) throws CookbookException {
+    public List<CookBookEntity> getMultipleEntities(@RefOnly @Default("#[payload]") final List<Integer> entityIds) throws CookbookException {
         Preconditions.checkNotNull(entityIds);
         try{
             return config.getClient().getList(entityIds);
@@ -238,7 +241,7 @@ public class CookbookConnector {
     }
 
     /**
-     * Polls the system every 10 seconds (default value) to fetch the recently added Recipes.
+     * Polls the system every X seconds (default value is 10 sec) to fetch the recently added Recipes.
      * <p/>
      *
      * @param callback A {@link SourceCallback} object that will hook the result into the Mule Event.
@@ -247,22 +250,12 @@ public class CookbookConnector {
     @OAuthProtected
     @Source(friendlyName = "Poll Recently Added Recipes", sourceStrategy = SourceStrategy.POLLING, pollingPeriod = 10000)
     public void getRecentlyAddedSource(final SourceCallback callback) throws CookbookException {
-        Preconditions.checkNotNull(callback);
-        if (config.getClient() != null) {
-            try{
-                // Every 5 seconds our callback will be executed
-                this.getConfig().getClient().getRecentlyAdded(new ICookbookCallback() {
-
-                    public void execute(List<Recipe> recipes) throws Exception {
-                        callback.process(recipes);
-                    }
-                });
-                if (Thread.interrupted()) {
-                    throw new CookbookException("Connection poll was interrupted.");
-                }
-            } catch(Exception e){
-                throw new CookbookException(e);
-            }
+        try{
+            logger.debug("Creating connection to wait for incoming recently created Recipes...");
+            callback.process(getRecentlyAdded());
+        } catch(Exception e){
+            logger.error("Unable to create connection to the Cookbook service.");
+            throw new CookbookException(e);
         }
     }
 
@@ -278,7 +271,7 @@ public class CookbookConnector {
     @OAuthProtected
     @Processor(friendlyName = "Update Entity")
     public CookBookEntity update(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type,
-            @Default("#[payload]") @RefOnly final Map<String, Object> entity) throws CookbookException {
+            @RefOnly @Default("#[payload]") final Map<String, Object> entity) throws CookbookException {
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(entity);
         try {
@@ -297,7 +290,7 @@ public class CookbookConnector {
      */
     @OAuthProtected
     @Processor(friendlyName = "Update Multiple Entities")
-    public List<CookBookEntity> updateMultipleEntities(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) @Default("#[payload]") @RefOnly final List<CookBookEntity> entities) throws CookbookException {
+    public List<CookBookEntity> updateMultipleEntities(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) @RefOnly @Default("#[payload]") final List<CookBookEntity> entities) throws CookbookException {
         Preconditions.checkNotNull(entities);
         try {
             return config.getClient().updateList(entities);
@@ -307,10 +300,11 @@ public class CookbookConnector {
     }
 
     /**
-     * Allows the caller to execute simple DSQL queries to the Cookbook service.
+     * Allows the caller to execute calls to the Cookbook service using a query string in CQL (Cookbook Query Language).
+     * For a detailed grammar description, please check the related section in this reference guide.
      * <p/>
      *
-     * @param query The query is DSQL format.
+     * @param query The query is CQL format.
      * @param pagingConfiguration The {@link PagingConfiguration} object with the needed parameters for paged queries.
      * @return The {@link QueryPagingDelegate} that handles the calls to Cookbook to run the query.
      * @throws CookbookException If the provided query string is invalid and cannot be executed or if the user session has expired.
