@@ -38,22 +38,22 @@ public class UpdateEntityTestCases extends AbstractTestCases {
     public void testUpdate() throws CookbookException {
         Map<String, Object> testData = TestDataBuilder.updateIngredientData();
 
-        Ingredient updated = (Ingredient)getConnector().update(EntityType.INGREDIENT.name(), testData);
-        assertThat(updated.getQuantity(), equalTo(Double.valueOf((String)testData.get("quantity"))));
+        Ingredient updated = (Ingredient) getConnector().update(EntityType.INGREDIENT.name(), testData);
+        assertThat(updated.getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
         assertThat(updated.getUnit().name(), equalTo(testData.get("unit")));
 
         // Double check
-        Ingredient current = (Ingredient)getConnector().get(EntityType.INGREDIENT.name(), 1);
-        assertThat(current.getQuantity(),equalTo(Double.valueOf((String)testData.get("quantity"))));
+        Ingredient current = (Ingredient) getConnector().get(EntityType.INGREDIENT.name(), 1);
+        assertThat(current.getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
         assertThat(current.getUnit().name(), equalTo(testData.get("unit")));
     }
 
     @Test
     public void testUpdateWithoutId() throws CookbookException {
-        try{
+        try {
             getConnector().update(EntityType.INGREDIENT.name(), TestDataBuilder.updateIngredientWithoutIdData());
             fail();
-        } catch(CookbookException e){
+        } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
     }

@@ -27,20 +27,20 @@ public class DeleteEntityTestCases extends AbstractTestCases {
     @Test
     public void testDelete() throws CookbookException {
         getConnector().delete(entityId);
-        try{
+        try {
             getConnector().get(EntityType.INGREDIENT.name(), entityId);
             fail();
-        } catch(CookbookException e){
+        } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
     }
 
     @Test
     public void testDeleteEntityNotFound() {
-        try{
+        try {
             getConnector().delete(-1);
             fail();
-        } catch(CookbookException e){
+        } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
     }

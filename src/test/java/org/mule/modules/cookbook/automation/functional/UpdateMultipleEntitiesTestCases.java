@@ -1,3 +1,8 @@
+/**
+ * (c) 2003-2016 MuleSoft, Inc. The software in this package is
+ * published under the terms of the CPAL v1.0 license, a copy of which
+ * has been included with this distribution in the LICENSE.md file.
+ */
 package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
@@ -47,12 +52,11 @@ public class UpdateMultipleEntitiesTestCases extends AbstractTestCases {
 
             @Override
             public CookBookEntity apply(final CookBookEntity input) {
-                Ingredient ingredient = (Ingredient)input;
-                if(input.getName().equals("Nori")){
+                Ingredient ingredient = (Ingredient) input;
+                if (input.getName().equals("Nori")) {
                     ingredient.setName("Nori sheets");
                     ingredient.setQuantity(9.0);
-                }
-                else if(input.getName().equals("Charqui")){
+                } else if (input.getName().equals("Charqui")) {
                     ingredient.setQuantity(500.0);
                     ingredient.setUnit(UnitType.GRAMS);
                 }
@@ -64,7 +68,7 @@ public class UpdateMultipleEntitiesTestCases extends AbstractTestCases {
         List<CookBookEntity> updatedEntities = getConnector().updateMultipleEntities(Lists.newArrayList(transformedEntities));
 
         // fetch single ingredient
-        Ingredient charqui = (Ingredient)Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {
+        Ingredient charqui = (Ingredient) Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {
 
             @Override
             public boolean apply(final CookBookEntity input) {
@@ -75,7 +79,7 @@ public class UpdateMultipleEntitiesTestCases extends AbstractTestCases {
         assertThat(charqui.getUnit(), is(UnitType.GRAMS));
 
         // fetch single ingredient
-        Ingredient miso = (Ingredient)Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {
+        Ingredient miso = (Ingredient) Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {
 
             @Override
             public boolean apply(final CookBookEntity input) {

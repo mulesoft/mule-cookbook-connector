@@ -35,8 +35,7 @@ public class TestDataBuilder {
                 mapper.convertValue(ImmutableMap.<String, Object> of("name", "Charqui", "unit", "KILOGRAMS", "quantity", "2.0"), Ingredient.class),
                 mapper.convertValue(ImmutableMap.<String, Object> of("name", "Hondashi", "unit", "UNIT", "quantity", "10.0"), Ingredient.class),
                 mapper.convertValue(ImmutableMap.<String, Object> of("name", "Miso", "unit", "KILOGRAMS", "quantity", "1.0"), Ingredient.class),
-                mapper.convertValue(ImmutableMap.<String, Object> of("name", "Nori", "unit", "UNIT", "quantity", "50.0"), Ingredient.class)
-        );
+                mapper.convertValue(ImmutableMap.<String, Object> of("name", "Nori", "unit", "UNIT", "quantity", "50.0"), Ingredient.class));
     }
 
     public static Map<String, Object> getIngredientData() {
@@ -44,25 +43,29 @@ public class TestDataBuilder {
     }
 
     public static Integer[] getMultipleEntitiesIDs() {
-        return new Integer[]{1, 2, 3, 4, 959};
+        return new Integer[] {
+                1,
+                2,
+                3,
+                4,
+                959 };
     }
 
     public static Integer[] getMultipleInvalidEntitiesIDs() {
-        return new Integer[]{1, 2, -3, -4, -959};
+        return new Integer[] {
+                1,
+                2,
+                -3,
+                -4,
+                -959 };
     }
 
     public static Map<String, Object> getRecentlyAddedRecipeData() {
-        ImmutableList directions = ImmutableList. of(
-                "Whip the curd till its smooth.",
-                "Mix well.",
-                "Add the chopped pineapple and half of the pomegranate seeds.",
-                "Reserve the other half for garnishing.",
-                "Chill the pineapple raita before serving.",
-                "Garnish the pineapple raita with the remaining pomegranate and chopped coriander leaves."
-        );
+        ImmutableList directions = ImmutableList.of("Whip the curd till its smooth.", "Mix well.", "Add the chopped pineapple and half of the pomegranate seeds.",
+                "Reserve the other half for garnishing.", "Chill the pineapple raita before serving.",
+                "Garnish the pineapple raita with the remaining pomegranate and chopped coriander leaves.");
 
-        ImmutableList ingredients = ImmutableList.<Map<String, Object>> of(
-                ImmutableMap.<String, Object> of("name", "Yogurt", "unit", "CUPS", "quantity", "2.5"),
+        ImmutableList ingredients = ImmutableList.<Map<String, Object>> of(ImmutableMap.<String, Object> of("name", "Yogurt", "unit", "CUPS", "quantity", "2.5"),
                 ImmutableMap.<String, Object> of("name", "Chopped fresh sweet pineapple", "unit", "CUPS", "quantity", "2.0"),
                 ImmutableMap.<String, Object> of("name", "Cayenne Pepper", "unit", "UNIT", "quantity", "1.0"),
                 ImmutableMap.<String, Object> of("name", "Roasted cumin powder", "unit", "SPOONS", "quantity", "2.0"),
@@ -71,13 +74,8 @@ public class TestDataBuilder {
                 ImmutableMap.<String, Object> of("name", "Coriander Leaves", "unit", "UNIT", "quantity", "3"),
                 ImmutableMap.<String, Object> of("name", "Black Salt/Rock Salt", "unit", "SPOONS", "quantity", "1"));
 
-        return ImmutableMap.<String, Object> builder()
-                .put("name", "Pineapple Raita")
-                .put("cookTime", "55.0")
-                .put("directions", directions)
-                .put("ingredients", ingredients)
-                .put("prepTime","15.0")
-                .build();
+        return ImmutableMap.<String, Object> builder().put("name", "Pineapple Raita").put("cookTime", "55.0").put("directions", directions).put("ingredients", ingredients)
+                .put("prepTime", "15.0").build();
     }
 
     public static Map<String, Object> updateIngredientData() {

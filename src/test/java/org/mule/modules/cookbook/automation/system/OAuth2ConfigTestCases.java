@@ -43,36 +43,36 @@ public class OAuth2ConfigTestCases {
 
     @Test
     public void testEmptyAccessToken() {
-        try{
+        try {
             config.setAccessToken("");
             config.postAuthorize();
             config.testConnect();
             fail();
-        } catch(ConnectionException e){
+        } catch (ConnectionException e) {
             assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
     }
 
     @Test
     public void testNullAccessToken() {
-        try{
+        try {
             config.setAccessToken(null);
             config.postAuthorize();
             config.testConnect();
             fail();
-        } catch(ConnectionException e){
+        } catch (ConnectionException e) {
             assertThat(e.getCause(), instanceOf(InvalidTokenException.class));
         }
     }
 
     @Test
     public void testInvalidAccessToken() {
-        try{
+        try {
             config.setAccessToken("AAA1234567#123CCC");
             config.postAuthorize();
             config.testConnect();
             fail();
-        } catch(ConnectionException e){
+        } catch (ConnectionException e) {
             // the cause of the Exception or RuntimeException
             assertThat(e.getCause().getCause(), instanceOf(InvalidTokenException.class));
         }

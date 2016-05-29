@@ -42,15 +42,15 @@ public class CreateEntityTestCases extends AbstractTestCases {
         entityId = createdEntity.getId();
         assertThat(createdEntity, instanceOf(Ingredient.class));
         assertThat((createdEntity).getName(), equalTo(testData.get("name")));
-        assertThat(((Ingredient)createdEntity).getQuantity(), equalTo(Double.valueOf((String)testData.get("quantity"))));
+        assertThat(((Ingredient) createdEntity).getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
     }
 
     @Test
     public void testCreateIngredientWithInvalidIdParam() throws CookbookException {
         testData = TestDataBuilder.createWithIdData();
-        try{
+        try {
             getConnector().create(EntityType.INGREDIENT.name(), testData);
-        } catch(CookbookException e){
+        } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(InvalidEntityException.class));
             assertThat(e.getCause().getMessage(), containsString("Cannot specify Id at creation"));
         }

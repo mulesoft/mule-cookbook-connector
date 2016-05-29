@@ -1,3 +1,8 @@
+/**
+ * (c) 2003-2016 MuleSoft, Inc. The software in this package is
+ * published under the terms of the CPAL v1.0 license, a copy of which
+ * has been included with this distribution in the LICENSE.md file.
+ */
 package org.mule.modules.cookbook.utils;
 
 import com.cookbook.tutorial.service.CookBookEntity;
@@ -10,7 +15,7 @@ public enum EntityType {
 
     private String displayName;
 
-    EntityType(final String displayName){
+    EntityType(final String displayName) {
         this.displayName = displayName;
     }
 

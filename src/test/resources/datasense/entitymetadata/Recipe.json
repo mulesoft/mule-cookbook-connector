@@ -1,18 +1,22 @@
 {
   "payload-type": "map",
   "payload": {
-    "directions": ["string"],
+    "directions": [
+      "string"
+    ],
     "created": "date_time",
     "cookTime": "double",
     "name": "string",
-    "ingredients": [{
-      "unit": "java.lang.Enum",
-      "quantity": "double",
-      "created": "date_time",
-      "name": "string",
-      "id": "integer",
-      "lastModified": "date_time"
-    }],
+    "ingredients": [
+      {
+        "unit": "java.lang.Enum",
+        "quantity": "double",
+        "created": "date_time",
+        "name": "string",
+        "id": "integer",
+        "lastModified": "date_time"
+      }
+    ],
     "id": "integer",
     "lastModified": "date_time",
     "prepTime": "double"

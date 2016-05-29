@@ -40,7 +40,7 @@ public class GetEntityTestCases extends AbstractTestCases {
     public void testGetNonExistentIngredient() {
         try {
             getConnector().get(EntityType.INGREDIENT.name(), -1);
-        } catch(CookbookException e){
+        } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
     }
@@ -49,7 +49,7 @@ public class GetEntityTestCases extends AbstractTestCases {
     public void testGetExistentIngredientWithInvalidType() throws CookbookException {
         try {
             getConnector().get(EntityType.RECIPE.name(), (Integer) testData.get("id"));
-        } catch(CookbookException e){
+        } catch (CookbookException e) {
             assertThat(e.getMessage(), containsString("No entity of type RECIPE was found for ID 1"));
         }
     }

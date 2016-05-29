@@ -26,22 +26,19 @@ public class QueryEntitiesTestCases extends AbstractTestCases {
     public void testQueryIngredients() throws Throwable {
         final Collection<CookBookEntity> entities = (Collection<CookBookEntity>) getDispatcher().runPaginatedMethod("queryEntities", new Object[] {
                 "GET ALL FROM INGREDIENT",
-                new PagingConfiguration(10)
-        });
+                new PagingConfiguration(10) });
         assertThat(CollectionUtils.isEmpty(entities), is(false));
         assertThat(Iterables.getFirst(entities, null), notNullValue());
     }
 
     @Test
     public void testInvalidQuery() throws Throwable {
-        try{
+        try {
             getDispatcher().runPaginatedMethod("queryEntities", new Object[] {
                     "SOME INVALID QUERY",
-                    new PagingConfiguration(10)
-            });
+                    new PagingConfiguration(10) });
             fail();
-        }
-        catch(Throwable e){
+        } catch (Throwable e) {
             assertThat(e.getCause(), instanceOf(InvalidRequestException.class));
         }
     }

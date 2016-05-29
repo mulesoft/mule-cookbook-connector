@@ -50,8 +50,8 @@ public class OAuth2Config extends AbstractConfig {
     @OAuthPostAuthorization
     public void postAuthorize() throws ConnectionException {
         setClient(new MuleCookBookClient(getAddress()));
-        if(StringUtils.isEmpty(getAccessToken())){
-            throw new ConnectionException(ConnectionExceptionCode.INCORRECT_CREDENTIALS, "" , "Access Token is null or empty", new InvalidTokenException());
+        if (StringUtils.isEmpty(getAccessToken())) {
+            throw new ConnectionException(ConnectionExceptionCode.INCORRECT_CREDENTIALS, "", "Access Token is null or empty", new InvalidTokenException());
         }
         getClient().setToken(getAccessToken());
     }
@@ -60,11 +60,9 @@ public class OAuth2Config extends AbstractConfig {
     public void testConnect() throws ConnectionException {
         try {
             getClient().getEntities();
-        }
-        catch(SessionExpiredException e){
+        } catch (SessionExpiredException e) {
             throw new ConnectionException(ConnectionExceptionCode.CREDENTIALS_EXPIRED, e.getMessage(), "Access token is expired.", e);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new ConnectionException(ConnectionExceptionCode.UNKNOWN, e.getMessage(), "Failed to connect to the Cookbook service.", e);
         }
     }
