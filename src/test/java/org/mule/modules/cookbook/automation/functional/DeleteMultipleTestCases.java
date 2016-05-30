@@ -5,30 +5,35 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
+import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.NoSuchEntityException;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.exception.CookbookException;
-import org.mule.modules.cookbook.utils.EntityType;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.fail;
 
-public class DeleteTestCases extends AbstractTestCases {
+public class DeleteMultipleTestCases extends AbstractTestCases {
 
-    private Integer entityId;
+    private List<Integer> entityIds;
 
     @Before
     public void setUp() throws CookbookException {
-        entityId = getConnector().create(EntityType.INGREDIENT.name(), TestDataBuilder.createIngredientData()).getId();
+        List<CookBookEntity> createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
+        entityIds = Lists.transform(createdEntities, ENTITY_IDS_FUNCTION);
     }
 
     @Test
-    public void testDelete() throws CookbookException {
-        getConnector().delete(entityId);
+    public void testDeleteMultipleIngredients() throws CookbookException {
+        getConnector().deleteMultiple(entityIds);
         try {
-            getConnector().get(EntityType.INGREDIENT.name(), entityId);
+            getConnector().getMultiple(entityIds);
             fail();
         } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
@@ -36,13 +41,16 @@ public class DeleteTestCases extends AbstractTestCases {
     }
 
     @Test
-    public void testDeleteEntityNotFound() {
+    public void testDeleteMultipleIngredientsNotFound() throws CookbookException {
         try {
-            getConnector().delete(-1);
+            List<Integer> copyOfIds = Lists.newArrayList(entityIds);
+            copyOfIds.add(-1);
+            getConnector().deleteMultiple(copyOfIds);
             fail();
         } catch (CookbookException e) {
             assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
+
     }
 
 }

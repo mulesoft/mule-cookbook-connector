@@ -5,54 +5,29 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.InvalidEntityException;
-import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.cookbook.tutorial.service.SessionExpiredException;
-import org.junit.After;
-import org.junit.Before;
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.Ingredient;
+import com.cookbook.tutorial.service.Recipe;
 import org.junit.Test;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+import org.mule.modules.cookbook.exception.CookbookException;
 
-import java.util.Map;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class GetTestCases extends AbstractTestCase<CookbookConnector> {
-
-    Map<String, Object> testData;
-    Map<String, Object> ingredient;
-
-    public GetTestCases() {
-        super(CookbookConnector.class);
-    }
-
-    @Before
-    public void setup() throws Exception {
-        testData = TestDataBuilder.getTestData();
-        ingredient = (Map<String, Object>) testData.get("ingredient-ref");
-        final Map<String, Object> objectMap = getConnector().create((String) testData.get("type"), ingredient);
-        testData.put("id", objectMap.get("id"));
-    }
+public class GetTestCases extends AbstractTestCases {
 
     @Test
-    public void testGet() {
-        try {
-            final Map<String, Object> objectMap = getConnector().get((String) testData.get("type"), (Integer) testData.get("id"));
-            assertEquals(ingredient.get("name"), objectMap.get("name"));
-            assertEquals(Double.valueOf((String) ingredient.get("quantity")), objectMap.get("quantity"));
-        } catch (NoSuchEntityException e) {
-            fail(e.getMessage());
-        } catch (SessionExpiredException e) {
-            fail(e.getMessage());
-        } catch (InvalidEntityException e) {
-            fail(e.getMessage());
-        }
+    public void testGetAvailableTypes() throws CookbookException {
+        List<CookBookEntity> entities = getConnector().getEntities();
+        assertThat(entities, notNullValue());
+        assertThat(entities.size(), is(2));
+        assertThat(entities, hasItem(isA(Ingredient.class)));
+        assertThat(entities, hasItem(isA(Recipe.class)));
     }
 
-    @After
-    public void tearDown() throws Exception {
-        getConnector().delete((Integer) testData.get("id"));
-    }
 }

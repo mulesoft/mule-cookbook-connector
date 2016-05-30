@@ -5,11 +5,19 @@
  */
 package org.mule.modules.cookbook.config;
 
+import com.cookbook.tutorial.client.MuleCookBookClient;
+import com.cookbook.tutorial.service.InvalidTokenException;
+import com.cookbook.tutorial.service.SessionExpiredException;
+import org.apache.cxf.common.util.StringUtils;
+import org.mule.api.ConnectionException;
+import org.mule.api.ConnectionExceptionCode;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.TestConnectivity;
-import org.mule.api.annotations.oauth.*;
-
-import com.cookbook.tutorial.client.MuleCookBookClient;
+import org.mule.api.annotations.oauth.OAuth2;
+import org.mule.api.annotations.oauth.OAuthAccessToken;
+import org.mule.api.annotations.oauth.OAuthConsumerKey;
+import org.mule.api.annotations.oauth.OAuthConsumerSecret;
+import org.mule.api.annotations.oauth.OAuthPostAuthorization;
 
 /**
  * Authenticates against the service using OAuth 2.0 protocol
@@ -17,7 +25,7 @@ import com.cookbook.tutorial.client.MuleCookBookClient;
  * @author MuleSoft, Inc.
  */
 @OAuth2(configElementName = "oauth2", friendlyName = "OAuth 2.0", authorizationUrl = "http://devkit-cookbook.cloudhub.io/rest/oauth/authorize", accessTokenUrl = "http://devkit-cookbook.cloudhub.io/rest/oauth/accessToken")
-public class OAuthConfig extends AbstractConfig {
+public class OAuth2Config extends AbstractConfig {
 
     /**
      * An access token associated with this instance.
@@ -40,14 +48,23 @@ public class OAuthConfig extends AbstractConfig {
     private String consumerSecret;
 
     @OAuthPostAuthorization
-    public void postAuthorize() {
+    public void postAuthorize() throws ConnectionException {
         setClient(new MuleCookBookClient(getAddress()));
+        if (StringUtils.isEmpty(getAccessToken())) {
+            throw new ConnectionException(ConnectionExceptionCode.INCORRECT_CREDENTIALS, "", "Access Token is null or empty", new InvalidTokenException());
+        }
         getClient().setToken(getAccessToken());
     }
 
     @TestConnectivity
-    public void testConnect() throws Exception {
-        getClient().getEntities();
+    public void testConnect() throws ConnectionException {
+        try {
+            getClient().getEntities();
+        } catch (SessionExpiredException e) {
+            throw new ConnectionException(ConnectionExceptionCode.CREDENTIALS_EXPIRED, e.getMessage(), "Access token is expired.", e);
+        } catch (Exception e) {
+            throw new ConnectionException(ConnectionExceptionCode.UNKNOWN, e.getMessage(), "Failed to connect to the Cookbook service.", e);
+        }
     }
 
     public void setAccessToken(String accessToken) {

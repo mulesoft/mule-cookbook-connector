@@ -6,28 +6,25 @@
 package org.mule.modules.cookbook.pagination;
 
 import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.InvalidRequestException;
 import com.cookbook.tutorial.service.SessionExpiredException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.api.MuleException;
 import org.mule.modules.cookbook.CookbookConnector;
+import org.mule.streaming.PagingConfiguration;
 import org.mule.streaming.ProviderAwarePagingDelegate;
 
 import java.util.List;
-import java.util.Map;
 
-public class CookbookPagingDelegate extends ProviderAwarePagingDelegate<Map<String, Object>, CookbookConnector> {
+public class QueryPagingDelegate extends ProviderAwarePagingDelegate<CookBookEntity, CookbookConnector> {
 
-    private Integer currentPage = 0;
-    private ObjectMapper m = new ObjectMapper();
-
-    private final Integer pageSize;
     private final String query;
+    private final Integer pageSize;
+    private Integer currentPage = 0;
 
-    public CookbookPagingDelegate(String query, Integer pageSize) {
+    public QueryPagingDelegate(String query, final PagingConfiguration pagingConfiguration) {
         super();
         this.query = query;
-        this.pageSize = pageSize;
+        this.pageSize = pagingConfiguration.getFetchSize();
     }
 
     public void close() throws MuleException {
@@ -37,34 +34,32 @@ public class CookbookPagingDelegate extends ProviderAwarePagingDelegate<Map<Stri
     /**
      * Returns the next page of items. If the return value is <code>null</code> or an empty list, then it means no more items are available
      *
-     * @param connector The provider to be used to do the query. You can assume this provider is already properly initialised
+     * @param provider
+     *            The provider to be used to do the query. You can assume this provider is already properly initialised
      * @return a populated list of elements. Returning <code>null</code> or an empty list, means no more items are available.
      * @throws Exception
      */
     @Override
-    public List<Map<String, Object>> getPage(CookbookConnector connector) throws Exception {
-
+    public List<CookBookEntity> getPage(final CookbookConnector provider) throws Exception {
         try {
-            List<CookBookEntity> list = connector.getConfig().getClient().searchWithQuery(query, currentPage++, pageSize);
-            return m.convertValue(list, new TypeReference<List<Map<String, Object>>>() {
-
-            });
-        } catch (SessionExpiredException ex) {
+            return provider.getConfig().getClient().searchWithQuery(query, currentPage++, pageSize);
+        } catch (InvalidRequestException | SessionExpiredException e) {
             // Revert the increment since we want to retry to get the same page if the reconnection is configured.
             currentPage--;
-            throw ex;
+            throw e;
         }
     }
 
     /**
      * Returns the total amount of items in the non-paged result set.
-     * <p/>
+     * <p>
      * In some scenarios, it might not be possible/convenient to actually retrieve this value. -1 is returned in such a case.
      *
-     * @param provider The provider to be used to do the query. You can assume this provider is already properly initialised
+     * @param provider
+     *            The provider to be used to do the query. You can assume this provider is already properly initialised
      */
     @Override
-    public int getTotalResults(CookbookConnector provider) throws Exception {
+    public int getTotalResults(final CookbookConnector provider) throws Exception {
         return -1;
     }
 
