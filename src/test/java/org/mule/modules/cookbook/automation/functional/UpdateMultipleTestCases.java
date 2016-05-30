@@ -31,13 +31,7 @@ public class UpdateMultipleTestCases extends AbstractTestCases {
     @Before
     public void setUp() throws CookbookException {
         createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
-        entityIds = Lists.transform(createdEntities, new Function<CookBookEntity, Integer>() {
-
-            @Override
-            public Integer apply(final CookBookEntity input) {
-                return input.getId();
-            }
-        });
+        entityIds = Lists.transform(createdEntities, ENTITY_IDS_FUNCTION);
     }
 
     @After

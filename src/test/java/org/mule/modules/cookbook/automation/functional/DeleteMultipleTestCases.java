@@ -26,13 +26,7 @@ public class DeleteMultipleTestCases extends AbstractTestCases {
     @Before
     public void setUp() throws CookbookException {
         List<CookBookEntity> createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
-        entityIds = Lists.transform(createdEntities, new Function<CookBookEntity, Integer>() {
-
-            @Override
-            public Integer apply(final CookBookEntity input) {
-                return input.getId();
-            }
-        });
+        entityIds = Lists.transform(createdEntities, ENTITY_IDS_FUNCTION);
     }
 
     @Test

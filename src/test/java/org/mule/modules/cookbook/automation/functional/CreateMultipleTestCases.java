@@ -34,13 +34,7 @@ public class CreateMultipleTestCases extends AbstractTestCases {
         final List<CookBookEntity> entities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
         assertThat(entities, notNullValue());
         assertThat(entities.size(), is(4));
-        entityIds = Lists.transform(entities, new Function<CookBookEntity, Integer>() {
-
-            @Override
-            public Integer apply(final CookBookEntity input) {
-                return input.getId();
-            }
-        });
+        entityIds = Lists.transform(entities, ENTITY_IDS_FUNCTION);
         assertThat(
                 entities,
                 Matchers.<CookBookEntity> hasItems(Matchers.hasProperty("name", equalTo("Charqui")), Matchers.hasProperty("name", equalTo("Hondashi")),

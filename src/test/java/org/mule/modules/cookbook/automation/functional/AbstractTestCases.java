@@ -5,6 +5,11 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.mule.modules.cookbook.CookbookConnector;
 import org.mule.modules.cookbook.exception.CookbookException;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
@@ -16,6 +21,14 @@ import java.util.List;
 public abstract class AbstractTestCases extends AbstractTestCase<CookbookConnector> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractTestCases.class);
+
+    protected static final Function<CookBookEntity, Integer> ENTITY_IDS_FUNCTION = new Function<CookBookEntity, Integer>() {
+
+        @Override
+        public Integer apply(final CookBookEntity input) {
+            return input.getId();
+        }
+    };
 
     protected AbstractTestCases() {
         super(CookbookConnector.class);
@@ -32,7 +45,7 @@ public abstract class AbstractTestCases extends AbstractTestCase<CookbookConnect
     }
 
     protected void silentlyDelete(List<Integer> ids) {
-        if (ids != null) {
+        if (!CollectionUtils.isEmpty(ids)) {
             try {
                 getConnector().deleteMultiple(ids);
             } catch (CookbookException e) {
