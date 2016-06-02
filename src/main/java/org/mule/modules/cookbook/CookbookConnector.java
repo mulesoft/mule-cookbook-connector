@@ -137,7 +137,7 @@ public class CookbookConnector {
         try {
             config.getClient().delete(id);
         } catch (NoSuchEntityException | SessionExpiredException e) {
-            logger.error("Unable to delete entity with ID {}", e, id);
+            logger.error("Unable to delete entity with ID {}", id, e);
             throw new CookbookException(e);
         }
     }

@@ -47,7 +47,7 @@ This document assumes that you are familiar with Mule, link:/mule-studio/v/3.8/a
 
 To use the Cookbook connector, you must have the following:
 
-* **Anypoint Studio:** if you don't use Anypoint Studio for development, follow the instructions to install the PeopleSoft Maven dependencies into your pom.xml file .
+* **Anypoint Studio:** if you don't use Anypoint Studio for development, follow the instructions to install the Cookbook Maven dependencies into your pom.xml file .
 * **Cookbook Service:** you can install it locally or use the service endpoint exposed in CloudHub. For Authentication details, refer to http://mulesoft.github.io/mule-cookbook-tutorial/#_authentication[Cookbook Authentication] section.
 
 
@@ -244,7 +244,7 @@ We recommend that you keep Studio up to date with its latest version. 
 [[using-connector]]
 == Using this Connector
 
-The Cookbook is an operation-based coonector, which means that, when you add the connector to your flow, you need to configure a specific operation it is intended to perform.
+The Cookbook is an operation-based connector, which means that, when you add the connector to your flow, you need to configure a specific operation it is intended to perform.
 
 The connector supports the following operations:
 
@@ -254,20 +254,20 @@ The connector supports the following operations:
 |===
 |*Create*| Creates a new entity.
 |*Create multiple*| Creates a list of entities.
-|*Delete*| Deletes an entitiy given its ID.
+|*Delete*| Deletes an entity given its ID.
 |*Delete multiple*| Deletes a list of entities given their IDs.
 |*Describe*| Retrieves the complete list of fields and data types (metadata) of a Ingredient or Recipe object.
 |*Get*| Retrieves an existing entity given its ID.
 |*Get multiple*| Retrieves a list of entities given a list of their IDs.
-|*Get recently added recipes*| Retrieves a list of the last created Recipes.
-|*Query*| Executes a query call to the Cookbook service and fetches all entities that matches the specidied criteria. The query string must comply with the  link:/mule-user-guide/v/3.8/cookbook-connector#cql-syntax[CQL syntax].
+|*Get recently added recipes*| Retrieves a list of the latest created Recipes.
+|*Query*| Executes a query call to the Cookbook service and fetches all entities that matches the specified criteria. The query string must comply with the  link:/mule-user-guide/v/3.8/cookbook-connector#cql-syntax[CQL syntax].
 |*Update*| Modifies the fields of a given entity.
 |*Update multiple*| Modifies the fields of a given list of entities.
 |===
 
 NOTE: Entity = Ingredient or Recipe.
 
-NOTE: When OAuth 2.0 is used, two additional operations will automatically appear in the operations list: Authorize and Unauthorize.
+NOTE: When OAuth 2.0 is used, two additional operations will automatically appear in the operations list: Authorize and Unauthorize. You *must* call the Authorize method *before* you execute any of the other operations.
 
 ==== Message Sources
 
@@ -357,7 +357,6 @@ contains
 
 ==== Query examples
 
-
 ```
 GET ALL FROM INGREDIENT
 
@@ -372,7 +371,7 @@ GET name FROM INGREDIENT MATCHING id==1
 GET ALL FROM RECIPE MATCHING id contains 1
 ```
 
-
+NOTE: the Query functionality provided by the Cookbook API is currently limited to two queries: `GET ALL FROM INGREDIENT' and `GET ALL FROM RECIPE`.
 
 [[connection-pool]]
 == Managing the Connection Pool
@@ -506,7 +505,7 @@ The XML should look similar to this snippet:
 
 10. Add a *Object to JSON* transformer to display the response in the browser.
 +
-NOTE: You can use any trasformer you want, such as *Object to XML*, for example.
+NOTE: You can use any transformer you want, such as *Object to XML*, for example.
 
 11. Add a *Logger* scope after the transformer to print the data that is being passed by the Cookbook connector in the Mule Console. Configure the Logger according to the table below.
 

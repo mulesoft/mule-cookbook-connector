@@ -28,8 +28,8 @@ The Cookbook Connector is compatible with:
   ** Username/Password based Configuration
   ** OAuth 2.0
 * DataSense.
-* Query Pagination, although currently limited to two queries: `GET ALL FROM INGREDIENT' and `GET ALL FROM RECIPE`
-* Ability to act as an Inbound Endpoint (ource) to poll results form the Cookbook repository.
+* Query Pagination, although currently limited to two queries: `GET ALL FROM INGREDIENT' and `GET ALL FROM RECIPE`.
+* Ability to act as an Inbound Endpoint (Source) to poll results form the Cookbook repository.
 * Custom transformer to enable conversion from Ingredient or Recipe to Map.
 
 === Version 1.0.0 Fixed in this Release
@@ -42,5 +42,5 @@ None.
 
 === See Also
 
-* To learn how you can use the features provided by Devkit refer to link:http://mulesoft.github.io/mule-cookbook-tutorial/[Mule Cookbook Tutorial]
-* Learn how to link:/mule-fundamentals/v/3.7/anypoint-exchange[Install Anypoint Connectors] using Anypoint Exchange.
+* To learn how you can use the features provided by Devkit refer to link:http://mulesoft.github.io/mule-cookbook-tutorial/[Mule Cookbook Tutorial].
+* Learn how to link:/mule-fundamentals/v/3.8/anypoint-exchange[Install Anypoint Connectors] using Anypoint Exchange.
