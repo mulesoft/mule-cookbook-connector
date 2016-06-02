@@ -46,7 +46,7 @@ The Cookbook service allows its users to perform *CRUD operations (Create, Read,
 [[prerequisites]]
 == Prerequisites
 
-This document assumes that you are familiar with Mule, link:/mule-studio/v/3.8/anypoint-connectors[Anypoint Connectors], and link:/mule-fundamentals/v/3.8/anypoint-studio-essentials[Anypoint Studio Essentials]. To increase your familiarity with Studio, consider completing the link:/mule-fundamentals/v/3.8/basic-studio-tutorial[Basic Studio Tutorial]. Further, this page assumes that you have a basic understanding of link:/mule-fundamentals/v/3.8/elements-in-a-mule-flow[Mule Flows] and link:/mule-fundamentals/v/3.8/global-elements[Mule Global Elements].
+This document assumes that you are familiar with Mule, link:/mule-user-guide/v/3.8/anypoint-connectors[Anypoint Connectors], and link:/mule-fundamentals/v/3.8/anypoint-studio-essentials[Anypoint Studio Essentials]. To increase your familiarity with Studio, consider completing the link:/mule-fundamentals/v/3.8/basic-studio-tutorial[Basic Studio Tutorial]. Further, this page assumes that you have a basic understanding of link:/mule-fundamentals/v/3.8/elements-in-a-mule-flow[Mule Flows] and link:/mule-fundamentals/v/3.8/global-elements[Mule Global Elements].
 
 To use the Cookbook connector, you must have the following:
 
@@ -589,5 +589,5 @@ image:ck_tips_testconnection_ok.png[Test Connection Success]
 === See Also
 
 * For additional technical information regarding Cookbook Connector and Devkit features, please visit our link:/anypoint-connector-devkit/v/3.8/devkit-tutorial[DevKit Tutorial]. This document is also known as the *Mule Cookbook Tutorial*, available link:http://mulesoft.github.io/mule-cookbook-tutorial/[here].
-* Learn more about working with link:/mule-studio/v/3.8/anypoint-connectors[Anypoint Connectors].
+* Learn more about working with link:/mule-user-guide/v/3.8/anypoint-connectors[Anypoint Connectors].
 * Learn how to use link:/mule-user-guide/v/3.8/transformers[ Transformers].
