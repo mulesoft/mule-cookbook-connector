@@ -18,15 +18,18 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 public class UpdateTestCases extends AbstractTestCases {
 
+    private Map<String, Object> testData;
     private Integer entityId;
 
     @Before
     public void setUp() throws CookbookException {
+        testData = TestDataBuilder.updateIngredientData();
         entityId = getConnector().create(EntityType.INGREDIENT.name(), TestDataBuilder.createIngredientData()).getId();
+        testData.put("id", entityId);
     }
 
     @After
@@ -36,14 +39,12 @@ public class UpdateTestCases extends AbstractTestCases {
 
     @Test
     public void testUpdate() throws CookbookException {
-        Map<String, Object> testData = TestDataBuilder.updateIngredientData();
-
         Ingredient updated = (Ingredient) getConnector().update(EntityType.INGREDIENT.name(), testData);
         assertThat(updated.getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
         assertThat(updated.getUnit().name(), equalTo(testData.get("unit")));
 
         // Double check
-        Ingredient current = (Ingredient) getConnector().get(EntityType.INGREDIENT.name(), 1);
+        Ingredient current = (Ingredient) getConnector().get(EntityType.INGREDIENT.name(), entityId);
         assertThat(current.getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
         assertThat(current.getUnit().name(), equalTo(testData.get("unit")));
     }

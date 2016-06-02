@@ -1,0 +1,420 @@
+<!--
+
+    (c) 2003-2015 MuleSoft, Inc. This software is protected under international
+    copyright law. All use of this software is subject to MuleSoft's Master
+    Subscription Agreement (or other Terms of Service) separately entered
+    into between you and MuleSoft. If such an agreement is not in
+    place, you may not use the software.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+<body>
+	<!-- Keep this simple ... define CSS for this simple webpage in the same file -->
+	<style>
+		body {
+			padding-top: 40px;
+			padding-bottom: 40px;
+			background-color: #eee;
+		}
+		.demo-form {
+			max-width: 500px;
+			padding: 15px;
+			margin: 0 auto;
+		}
+		.demo-form .demo-heading,
+		.demo-form .checkbox {
+			margin-bottom: 10px;
+		}
+		.demo-form .checkbox {
+			font-weight: normal;
+		}
+		.demo-form .form-control {
+			position: relative;
+			height: auto;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+			padding: 10px;
+			font-size: 16px;
+		}
+		.demo-form .form-control:focus {
+			z-index: 2;
+		}
+		input,
+        select {
+            margin-bottom: 20px;
+        }		
+	</style>
+	<script type="text/javascript">
+	
+		var btn = null;
+		var loaderUrl = "http://i.giphy.com/lijuimVKUcwRa.gif";
+		var genericErrorMsg = "Operation could not be processed.";
+		
+	 	var createDiv = null;
+		var readDiv   = null;
+		var updateDiv = null;
+		var deleteDiv = null;
+		
+		var createForm = null;
+		var readForm   = null;
+		var updateForm = null;
+		var deleteForm = null;	
+	 	
+	 	var demoController = {
+
+			init : function(){
+	            	
+				createDiv 	= $('#createDiv');
+    			readDiv 	= $('#readDiv');		
+    			updateDiv 	= $('#updateDiv');
+    			deleteDiv 	= $('#deleteDiv');
+    			
+    			createForm 	= $('#createForm');
+    			readForm 	= $('#readForm');
+    			updateForm 	= $('#updateForm');
+    			deleteForm 	= $('#deleteForm');
+    			
+    			$('input[required]').keyup(function() {
+    				var formId = $(this).closest('form').attr('id');
+       				if(demoController.validateRequired(formId)){
+       					$(this).parent().find(':submit').removeAttr('disabled');
+       				}
+       				else{
+       					$(this).parent().find(':submit').attr('disabled', 'disabled');
+       				}
+       		    });
+    			
+				$("#btnCreate").click(function(e){
+                	demoController.createEntity(e);
+                });
+    			 
+    			$("#btnGet").click(function(e){
+                    demoController.getEntity(e);
+                });
+    			 
+    			$("#btnUpdate").click(function(e){
+                    demoController.updateEntity(e);
+                });
+    			 
+    			$("#btnDelete").click(function(e){
+                    demoController.deleteEntity(e);
+                });
+    			
+	        },
+	 	
+	        validateRequired : function(formId){
+	        	var inputs = $("#"+ formId + " input[required]");
+	        	var empty = true;
+	        	$.each(inputs, function(){
+                    if (!this.value) {
+                    	empty = false;
+                    }
+	        	});
+	        	return empty;
+	        },
+	        
+		 	blockPage : function(containerID, message) {
+	
+	            if(message == null){
+	                message = "Loading...";
+	            }
+	          
+	            $(containerID).block({
+	                message : '<h4>'+message+'<br><br><img src='+loaderUrl+ 'height=32 width=32/></h4>',
+	                overlayCSS : {
+	                    backgroundColor : '#000',
+	                    opacity : 0.2,
+	                    cursor : 'wait'
+	                },
+	                css : {
+	                    padding : 20,
+	                    margin : 0,
+	                    top: '50%', 
+	                    left: '50%',
+	                    width : '250px',
+	                    textAlign : 'center',
+	                    color : '#000',
+	                    border : '0px solid #aaa',
+	                    cursor : 'wait',
+	                    '-webkit-border-radius' : '5px',
+	                    '-moz-border-radius' : '5px',
+	                }
+	
+	            });
+	        },
+	
+	        unBlockPage : function(containerID) {
+	                $(containerID).unblock();
+	        },	        
+	      
+	        handleResponse : function(response){
+                if(response == null || response == ''){
+                    bootbox.alert(genericErrorMsg);
+                    return false;
+                }
+                // error
+                else if(response.message != null){                   
+                    bootbox.alert(response.message);
+                    return false;
+                }
+                else{
+                    return true;
+                }                 
+            },	 	
+	 	
+            toggleDiv : function(hideDiv, showDiv){
+            	$('#' + hideDiv).collapse('hide');
+            	$('#' + showDiv).collapse('show');	  
+            },
+            
+            enable : function(id){
+            	$('#' + id).removeAttr('disabled');
+            },
+            
+            // CREATE
+		 	createEntity : function(e){
+	
+	            e.preventDefault();
+	            demoController.blockPage('html', 'Creating ingredient...');
+	
+	            $.ajax({
+	            	type: 'POST',						
+	                url: '/create',
+	                data: createForm.serialize(),
+	                success: function(data) {	                	
+	                	console.log(data);	      
+	                	if(demoController.handleResponse(data)){
+	                		bootbox.alert('Ingredient ['+data.id+'] ' +data.name+ ' successfully created.');
+	                		$('input[name="getId"]').val(data.id);
+	                		demoController.enable('btnGet');
+	                		demoController.toggleDiv('createDiv', 'readDiv'); 
+	                	}	                	   	
+	                },
+	                error: function(request, status, error){
+	                    bootbox.alert(genericErrorMsg, function(){
+	                        demoController.unBlockPage('html');
+	                    });
+	                }
+	            }).complete(function(){
+	                demoController.unBlockPage('html');
+	            });
+	            return false;
+	        },
+	        // GET
+	        getEntity : function(e){
+	
+	            e.preventDefault();
+	            demoController.blockPage('html', 'Retrieving ingredient...');
+	
+	            $.ajax({
+	            	type: 'POST',
+	                url: '/get',
+	                data: readForm.serialize(),
+	                success: function(data) {	                	
+	                	console.log(data);	  	                	
+	                	if(demoController.handleResponse(data)){
+	                		var formatCreationDate = new Date(data.created * 1000);
+		                	var formatUpdateDate = new Date(data.lastModified * 1000);
+		                	$('input[name="updateId"]').val(data.id);
+		                	$('input[name="updateName"]').val(data.name);
+		                	$('input[name="updateCreated"]').val(formatCreationDate);	                	
+		                	$('input[name="updateLastModified"]').val(formatUpdateDate);
+		                	$('input[name="updateQuantity"]').val(data.quantity);
+		                	$('.updateUnit').val(data.unit);
+		                	demoController.enable('btnUpdate');
+		                   	demoController.toggleDiv('readDiv', 'updateDiv'); 
+	                	}	                		                	
+	                },
+	                error: function(request, status, error){
+	                    bootbox.alert(genericErrorMsg, function(){
+	                        demoController.unBlockPage('html');
+	                    });
+	                }
+	            }).complete(function(){
+	                demoController.unBlockPage('html');
+	            });
+	            return false;
+	        },
+	        // UPDATE
+	        updateEntity : function(e){
+	
+	            e.preventDefault();
+	            demoController.blockPage('html', 'Updading ingredient...');
+	
+	            $.ajax({
+	            	type: 'POST',						
+	                url: '/update',
+	                data: updateForm.serialize(),
+	                success: function(data) {	                	
+	                	console.log(data);
+	                	if(demoController.handleResponse(data)){
+	                		bootbox.alert('Ingredient ['+data.id+'] ' +data.name+ ' was successfully updated.');
+	                		$('input[name="deleteId"]').val(data.id);
+	                		demoController.enable('btnDelete');
+	                		demoController.toggleDiv('updateDiv', 'deleteDiv'); 
+	                	}	                	
+	                },
+	                error: function(request, status, error){
+	                    bootbox.alert(genericErrorMsg, function(){
+	                        demoController.unBlockPage('html');
+	                    });
+	                }
+	            }).complete(function(){
+	                demoController.unBlockPage('html');
+	            });
+	            return false;
+	        },
+	        // DELETE
+	        deleteEntity : function(e){
+	
+	            e.preventDefault();
+	            demoController.blockPage('html', 'Deleting ingredient...');
+	
+	            $.ajax({
+	            	type: 'POST',						
+	                url: '/delete',
+	                data: deleteForm.serialize(),
+	                success: function(data) {
+	                	console.log(data);		                	
+	                	if(demoController.handleResponse(data)){
+	                		bootbox.alert('Ingredient successfully deleted.');	    
+	                		demoController.toggleDiv('deleteDiv', 'createDiv'); 
+	                	}	                	
+	                },
+	                error: function(request, status, error){
+	                    bootbox.alert(genericErrorMsg, function(){
+	                        demoController.unBlockPage('html');
+	                    });
+	                }
+	            }).complete(function(){
+	                demoController.unBlockPage('html');
+	            });
+	            return false;
+	        }
+	 	}
+        // INIT CONTROLLER
+        $(document).ready( function() {      
+            demoController.init();
+        });
+    </script>
+    <div class="container">
+        <h3>Cookbook Demo (Ingredient CRUD)</h3>
+        <hr>
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title demo-heading">
+                         <a data-toggle="collapse" data-parent="#accordion" href="#createDiv">Create</a>
+                    </h2>
+                </div>
+                <div id="createDiv" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <form id="createForm" class="demo-form" role="form" >
+                            <label>Name</label>
+                            <input type="text" name="createName" required class="form-control">
+                            <label>Quantity</label>
+                            <input type="number" name="createQuantity" required class="form-control">
+                            <label>Unit</label>
+                            <select name="createUnit" class="form-control">
+                            	<option value="CUPS">CUPS</option>
+                            	<option value="KILOGRAMS">KILOGRAMS</option>
+                            	<option value="LITERS">LITERS</option>
+                            	<option value="MILLIGRAMS">MILLIGRAMS</option>
+                            	<option value="MILLILITERS">MILLILITERS</option>
+                            	<option value="POUNDS">POUNDS</option>
+                            	<option value="SPOONS">SPOONS</option>
+                            	<option value="CUPS">CUPS</option>
+                            	<option value="UNIT">UNIT</option>
+                            </select>
+                            <button class="btn btn-lg btn-primary btn-block" disabled type="submit" id="btnCreate">Create</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title demo-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#readDiv">Get</a>
+                    </h2>
+                </div>
+                <div id="readDiv" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <form id="readForm" class="demo-form" role="form">
+                        	<label>Ingredient ID</label>
+                            <input type="number" name="getId" required class="form-control">
+                            <button class="btn btn-lg btn-primary btn-block" disabled type="submit" id="btnGet">Get</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title demo-heading">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#updateDiv">Update</a>
+                    </h2>
+                </div>
+                <div id="updateDiv" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <form id="updateForm" class="demo-form" role="form" >
+                            <label>ID</label>
+                            <input type="text" name="updateId" readonly required class="form-control">
+                            <label>Name</label>
+                            <input type="text" name="updateName" readonly required class="form-control">
+                            <label>Created</label>
+                            <input type="text" name="updateCreated" readonly required class="form-control">
+                            <label>Last modified</label>
+                            <input type="text" name="updateLastModified" required readonly class="form-control">
+                            <label>Quantity</label>
+                            <input type="number" name="updateQuantity" required class="form-control">
+                            <label>Unit</label>
+                            <select name="updateUnit" class="form-control">
+                            	<option value="CUPS">CUPS</option>
+                            	<option value="KILOGRAMS">KILOGRAMS</option>
+                            	<option value="LITERS">LITERS</option>
+                            	<option value="MILLIGRAMS">MILLIGRAMS</option>
+                            	<option value="MILLILITERS">MILLILITERS</option>
+                            	<option value="POUNDS">POUNDS</option>
+                            	<option value="SPOONS">SPOONS</option>
+                            	<option value="CUPS">CUPS</option>
+                            	<option value="UNIT">UNIT</option>
+                            </select>   
+                            <button class="btn btn-lg btn-primary btn-block" disabled type="submit" id="btnUpdate">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>           
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title demo-heading">
+                         <a data-toggle="collapse" data-parent="#accordion" href="#deleteDiv">Delete</a>
+                    </h2>
+                </div>
+                <div id="deleteDiv" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <form id="deleteForm" class="demo-form" role="form" >                           
+                            <label>Ingredient ID</label>
+                            <input type="number" name="deleteId" required class="form-control">                            
+                            <button class="btn btn-lg btn-primary btn-block" disabled type="submit" id="btnDelete">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

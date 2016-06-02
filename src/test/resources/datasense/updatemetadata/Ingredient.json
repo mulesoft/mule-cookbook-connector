@@ -1,0 +1,9 @@
+{
+  "payload-type": "map",
+  "payload": {
+    "unit": "java.lang.Enum",
+    "quantity": "double",
+    "name": "string",
+    "id": "integer"
+  }
+}

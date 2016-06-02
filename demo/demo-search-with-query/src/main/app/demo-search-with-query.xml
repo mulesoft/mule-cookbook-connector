@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:successfactors="http://www.mulesoft.org/schema/mule/successfactors" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:cluster="http://www.mulesoft.org/schema/mule/ee/cluster" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:cookbook="http://www.mulesoft.org/schema/mule/cookbook" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/cookbook http://www.mulesoft.org/schema/mule/cookbook/current/mule-cookbook.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/successfactors http://www.mulesoft.org/schema/mule/successfactors/current/mule-successfactors.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <cookbook:oauth2 name="Cookbook__OAuth_2_0" consumerKey="${oauth.consumerKey}" consumerSecret="${oauth.consumerSecret}" doc:name="Cookbook: OAuth 2.0">
+        <cookbook:oauth-callback-config domain="locahost" localPort="8081" remotePort="8081" path="callback"/>
+    </cookbook:oauth2>
+    <cookbook:config name="Cookbook__Configuration" username="${config.username}" password="${config.password}" doc:name="Cookbook: Configuration"/>
+    <flow name="Html_Form_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
+        <parse-template location="form.html" doc:name="Parse Template"/>
+        <set-property propertyName="Content-Type" value="text/html" doc:name="Content-Type"/>
+        <exception-strategy ref="Global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="Query_Entities_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/query" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Query string">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.queryString]]></dw:set-payload>
+        </dw:transform-message>
+        <cookbook:query config-ref="Cookbook__Configuration" query="dsql:SELECT name,quantity,unit FROM Ingredient"  doc:name="Execute query" />
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <exception-strategy ref="Global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="Get_Entity_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/get" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Entity ID">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.getId]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="++++++++++ #[flow.name] | Params: #[payload] ++++++++++" level="INFO" doc:name="Params"/>
+        <cookbook:get config-ref="Cookbook__Configuration" type="Ingredient" id="#[payload]" doc:name="Get"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="++++++++++ #[flow.name] | Result: #[payload] ++++++++++" level="INFO" doc:name="Result"/>
+        <exception-strategy ref="Global_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <choice-exception-strategy name="Global_Exception_Strategy">
+        <catch-exception-strategy when="#[exception.causedBy(org.mule.modules.cookbook.exception.CookbookException)]" doc:name="Catch Cookbook Exception Strategy">
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <set-payload value="#[exception.cause]" doc:name="Return Error Object"/>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy doc:name="Catch Generic Exception Strategy">
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <set-payload value="#[exception.causeException]" doc:name="Return Error Object"/>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+        </catch-exception-strategy>
+    </choice-exception-strategy>
+</mule>

@@ -10,11 +10,16 @@ import com.cookbook.tutorial.service.Ingredient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
 
 public class TestDataBuilder {
+
+    public static final List<String> KEYS = ImmutableList.<String> builder().add("Ingredient").add("Recipe").build();
+    public static final List<String> INGREDIENT_FIELDS = ImmutableList.of("id", "created", "lastModified", "name", "quantity", "unit");
+    public static final List<String> RECIPE_FIELDS = ImmutableList.of("id", "created", "lastModified", "name", "prepTime", "cookTime", "ingredients", "directions");
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -23,7 +28,7 @@ public class TestDataBuilder {
     }
 
     public static Map<String, Object> createIngredientData() {
-        return ImmutableMap.<String, Object> of("name", "Uncooked Pasta", "unit", "GRAMS", "quantity", "8.0");
+        return ImmutableMap.<String, Object> of("name", "Japanese Rice", "unit", "GRAMS", "quantity", "500.0");
     }
 
     public static Map<String, Object> createWithIdData() {
@@ -38,25 +43,12 @@ public class TestDataBuilder {
                 mapper.convertValue(ImmutableMap.<String, Object> of("name", "Nori", "unit", "UNIT", "quantity", "50.0"), Ingredient.class));
     }
 
-    public static Map<String, Object> getIngredientData() {
-        return ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef");
-    }
-
-    public static Integer[] getMultipleEntitiesIDs() {
-        return new Integer[] {
-                1,
-                2,
-                3,
-                4,
-                959 };
-    }
-
     public static Integer[] getMultipleInvalidEntitiesIDs() {
         return new Integer[] {
-                1,
                 2,
                 -3,
                 -4,
+                5,
                 -959 };
     }
 
@@ -79,7 +71,11 @@ public class TestDataBuilder {
     }
 
     public static Map<String, Object> updateIngredientData() {
-        return ImmutableMap.<String, Object> of("id", 1, "name", "Extra Lean Ground Beef", "unit", "POUNDS", "quantity", "888.8");
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("name", "Extra Lean Ground Beef");
+        map.put("unit", "POUNDS");
+        map.put("quantity", "888.8");
+        return map;
     }
 
     public static Map<String, Object> updateIngredientWithoutIdData() {

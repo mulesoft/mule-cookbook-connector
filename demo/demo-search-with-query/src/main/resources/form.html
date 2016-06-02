@@ -1,0 +1,247 @@
+<!--
+
+    (c) 2003-2015 MuleSoft, Inc. This software is protected under international
+    copyright law. All use of this software is subject to MuleSoft's Master
+    Subscription Agreement (or other Terms of Service) separately entered
+    into between you and MuleSoft. If such an agreement is not in
+    place, you may not use the software.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+<body>
+	<!-- Keep this simple ... define CSS for this simple webpage in the same file -->
+	<style>
+		body {
+			padding-top: 40px;
+			padding-bottom: 40px;
+			background-color: #eee;
+		}
+		.demo-form {
+			max-width: 500px;
+			padding: 15px;
+			margin: 0 auto;
+		}
+		.demo-form .demo-heading,
+		.demo-form .checkbox {
+			margin-bottom: 10px;
+		}
+		.demo-form .checkbox {
+			font-weight: normal;
+		}
+		.demo-form .form-control {
+			position: relative;
+			height: auto;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+			padding: 10px;
+			font-size: 16px;
+		}
+		.demo-form .form-control:focus {
+			z-index: 2;
+		}
+		input,
+		select,
+        textarea,
+        .btn {
+            margin-bottom: 20px;
+        }
+	</style>
+	<script type="text/javascript">
+	
+		var btn = null;
+		var loaderUrl = "http://i.giphy.com/lijuimVKUcwRa.gif";
+		var genericErrorMsg = "No results found.";
+		
+	 	var queryDiv = null;		
+		var queryForm = null;
+		var queryResult = null;
+		var resultDropdown = null;
+	 	
+	 	var demoController = {
+
+			init : function(){
+	            	
+				queryDiv 	= $('#queryDiv');
+				queryForm 	= $('#queryForm');	
+				queryResult = $('form textarea');
+				resultDropdown = $('.result-dropdown');
+				
+				$("#btnQuery").click(function(e){
+                	demoController.executeQuery(e);
+                });
+				
+				$("#btnGet").click(function(e){
+                	demoController.getEntity(e);
+                });
+    			
+	        },
+	 		        
+		 	blockPage : function(containerID, message) {
+	
+	            if(message == null){
+	                message = "Loading...";
+	            }
+	          
+	            $(containerID).block({
+	                message : '<h4>'+message+'<br><br><img src='+loaderUrl+ 'height=32 width=32/></h4>',
+	                overlayCSS : {
+	                    backgroundColor : '#000',
+	                    opacity : 0.2,
+	                    cursor : 'wait'
+	                },
+	                css : {
+	                    padding : 20,
+	                    margin : 0,
+	                    top: '50%', 
+	                    left: '50%',
+	                    width : '250px',
+	                    textAlign : 'center',
+	                    color : '#000',
+	                    border : '0px solid #aaa',
+	                    cursor : 'wait',
+	                    '-webkit-border-radius' : '5px',
+	                    '-moz-border-radius' : '5px',
+	                }
+	
+	            });
+	        },
+	
+	        unBlockPage : function(containerID) {
+	                $(containerID).unblock();
+	        },	        
+	      
+	        handleResponse : function(response){
+                if(response == null || response == ''){
+                    bootbox.alert(genericErrorMsg);
+                    return false;
+                }
+                // error
+                else if(response.message != null){                   
+                    bootbox.alert(response.message);
+                    return false;
+                }
+                else{
+                    return true;
+                }                 
+            },	 	
+	 	
+            toggleDiv : function(hideDiv, showDiv){
+            	$('#' + hideDiv).collapse('hide');
+            	$('#' + showDiv).collapse('show');	  
+            },
+            // EXECUTE
+		 	executeQuery : function(e){
+	
+	            e.preventDefault();
+	            demoController.blockPage('html', 'Processing request...');
+	
+	            $.ajax({
+	            	type: 'POST',						
+	                url: '/query',
+	                data: queryForm.serialize(),
+	                success: function(data) {	 
+	                	console.log(data);	   
+	                	queryResult.empty();
+	                	if(demoController.handleResponse(data)){	                		
+	                		var results = data.length;
+	                		$('.result').append(' ' + results);
+	                        if(results > 0){                            
+	                            $.each(data, function() {
+	                                $('<option />', { value: this.id, text: this.name + ' (' + this.quantity + ' ' +  this.unit + ')' }).appendTo(resultDropdown);
+	                            });
+	                            resultDropdown.append($('<br>'));
+	                            $('#btnGet').removeAttr('disabled');
+	                        }
+	                        else{
+	                        	resultDropdown.empty();	                        	
+	                            $('#btnGet').attr('disabled', 'disabled');
+	                        }	                		
+	                	}
+	                },
+	                error: function(request, status, error){
+	                    bootbox.alert(genericErrorMsg, function(){
+	                        demoController.unBlockPage('html');
+	                    });
+	                }
+	            }).complete(function(){
+	                demoController.unBlockPage('html');
+	            });
+	            return false;
+	        },
+	     	// GET
+	        getEntity : function(e){
+	
+	            e.preventDefault();
+	            demoController.blockPage('html', 'Retrieving ingredient...');
+	
+	            $.ajax({
+	            	type: 'POST',						
+	                url: '/get',
+	                data: queryForm.serialize(),
+	                success: function(data) {	                	
+	                	console.log(data);	 
+	                	queryResult.empty();
+	                	if(demoController.handleResponse(data)){	                		
+	                		queryResult.append(JSON.stringify(data, null, 2));
+	                	}	                		                	
+	                },
+	                error: function(request, status, error){
+	                    bootbox.alert(genericErrorMsg, function(){
+	                        demoController.unBlockPage('html');
+	                    });
+	                }
+	            }).complete(function(){
+	                demoController.unBlockPage('html');
+	            });
+	            return false;
+	        }
+	 	}
+        // INIT CONTROLLER
+        $(document).ready( function() {      
+            demoController.init();
+        });
+    </script>
+    <div class="container">
+        <h3>Cookbook Demo (Search with Query)</h3>
+        <hr>
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title demo-heading">
+                         <a data-toggle="collapse" data-parent="#accordion" href="#queryDiv">Query</a>
+                    </h2>
+                </div>
+                <div id="queryDiv" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <form id="queryForm" class="demo-form" role="form" >
+                            <label>Query</label>
+                            <input type="text" name="queryString" value="GET ALL FROM INGREDIENT" required class="form-control">
+                            <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnQuery">Execute</button>
+                            <label class="result">Results</label>
+                            <select class="result-dropdown form-control" name="getId"></select>                            
+                            <button class="btn btn-lg btn-success btn-block" disabled type="submit" id="btnGet">Get entity</button>
+                            <label class="result">Description</label>
+                            <textarea class="form-control" rows="7"></textarea>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -46,6 +46,12 @@ public class CreateTestCases extends AbstractTestCases {
     }
 
     @Test
+    public void testCreateRecipe() throws CookbookException {
+        final CookBookEntity createdEntity = getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData());
+        entityId = createdEntity.getId();
+    }
+
+    @Test
     public void testCreateIngredientWithInvalidIdParam() throws CookbookException {
         testData = TestDataBuilder.createWithIdData();
         try {
