@@ -6,24 +6,42 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import com.cookbook.tutorial.service.NoSuchEntityException;
+import com.google.common.collect.Lists;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.exception.CookbookException;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
 public class GetMultipleTestCases extends AbstractTestCases {
+
+    private List<CookBookEntity> createdEntities;
+    private List<Integer> entityIds;
+
+    @Before
+    public void setUp() throws CookbookException {
+        createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
+        entityIds = Lists.transform(createdEntities, ENTITY_IDS_FUNCTION);
+    }
+
+    @After
+    public void tearDown() throws CookbookException {
+        silentlyDelete(entityIds);
+    }
 
     @Test
     public void testGetMultipleEntities() throws CookbookException {
-        List<CookBookEntity> entities = getConnector().getMultiple(Arrays.asList(TestDataBuilder.getMultipleEntitiesIDs()));
+        List<CookBookEntity> entities = getConnector().getMultiple(entityIds);
         assertThat(entities, notNullValue());
-        assertThat(entities.size(), is(5));
+        assertThat(entities.size(), is(createdEntities.size()));
     }
 
     @Test

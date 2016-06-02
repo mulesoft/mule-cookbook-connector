@@ -7,8 +7,6 @@ package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.mule.modules.cookbook.CookbookConnector;
 import org.mule.modules.cookbook.exception.CookbookException;
@@ -45,7 +43,7 @@ public abstract class AbstractTestCases extends AbstractTestCase<CookbookConnect
     }
 
     protected void silentlyDelete(List<Integer> ids) {
-        if (!CollectionUtils.isEmpty(ids)) {
+        if (CollectionUtils.isEmpty(ids)) {
             try {
                 getConnector().deleteMultiple(ids);
             } catch (CookbookException e) {

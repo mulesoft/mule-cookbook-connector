@@ -6,12 +6,12 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.Recipe;
+import com.google.common.collect.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.utils.EntityType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,12 +20,14 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class GetRecentlyAddedSourceTestCases extends AbstractTestCases {
 
-    private List<Integer> entityIds = new ArrayList<>(0);
+    private List<Integer> entityIds = Lists.newArrayList();
 
     @Before
     public void setUp() throws Throwable {
         getDispatcher().initializeSource("getRecentlyAddedSource", new Object[] { null });
         getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData());
+        // gives time to the source to fetch the created entity
+        Thread.sleep(3000);
     }
 
     @After
