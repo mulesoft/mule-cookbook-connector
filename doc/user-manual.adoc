@@ -579,7 +579,7 @@ image:ck_example_result.png[Example Update Flow]
 [[demos]]
 === Demos
 
-You can download fully working examples from link:link:https://github.com/mulesoft/cookbook-connector/tree/master/demo[demo Mule applications][here]
+You can download fully working examples from link:https://github.com/mulesoft/cookbook-connector/tree/master/demo[here]
 
 
 [[tips]]
