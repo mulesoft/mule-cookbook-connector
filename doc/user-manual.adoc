@@ -168,8 +168,8 @@ image:global-element-create-annot.png[create global element]
 . On the *Global Mule Configuration Elements* screen, click *Create*.
 . Type `cookbook` into the Search bar.
 . In the *Choose Global Type* wizard, expand *Connector Configuration* and select one of the provided options:
-  ** Cookbook: Configuration (Basic Authentication)
-  ** Cookbook: OAuth 2.0 (OAuth 2.0 authentication)
+  ** *Cookbook: Configuration* (Basic Authentication)
+  ** *Cookbook: OAuth 2.0* (OAuth 2.0 Authentication)
 . Click *Ok*.
 +
 image:cookbook_config_global_wizard.png["Global Element Configuration Wizard"]
