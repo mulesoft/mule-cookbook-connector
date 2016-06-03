@@ -8,7 +8,7 @@ image:connector-cookbook-1.png[cookbook img]
 
 [NOTE]
 ====
-Read on to see how the *Cookbook connector* connects to the link:#cookbook-api[Cookbook API and Service].
+Read on to see how the *Cookbook Connector* connects to the link:#cookbook-api[Cookbook API and Service].
 
 You may want to read the link:/release-notes/cookbook-connector-release-notes[Release Notes] for this connector before trying it out.
 
@@ -21,10 +21,10 @@ toc::[toc]
 [[intro]]
 == Purpose of this Guide
 
-* Provide a starting point for usage of an Anypoint Connector in the Anypoint Studio IDE for the purpose of creating a working Mule application
+* Provide a starting point for usage of an Anypoint Connector in the Anypoint Studio IDE to create a working Mule application
 * Compliment the link:https://docs.mulesoft.com/anypoint-connector-devkit/v/3.8/devkit-tutorial[Anypoint Connector Development Tutorial], for experienced Java developers looking to code their own connector.
 
-Whether or not you are new to connectors, read this guide with the understanding that coding an Anypoint Connector generally means managing connections, and supporting operations within a modular object-oriented framework.
+Whether or not you are new to connectors, read this guide with the understanding that coding an Anypoint Connector generally means writing a framework for managing connections, and supporting operations of an API of interest.
 
 [IMPORTANT]
 *Anypoint Connectors* are designed and built to hook into a target service to execute tasks. +
@@ -46,11 +46,11 @@ The Cookbook service allows its users to perform *CRUD operations (Create, Read,
 [[prerequisites]]
 == Prerequisites
 
-This document assumes that you are familiar with Mule, link:/mule-user-guide/v/3.8/anypoint-connectors[Anypoint Connectors], and link:/mule-fundamentals/v/3.8/anypoint-studio-essentials[Anypoint Studio Essentials]. To increase your familiarity with Studio, consider completing the link:/mule-fundamentals/v/3.8/basic-studio-tutorial[Basic Studio Tutorial]. Further, this page assumes that you have a basic understanding of link:/mule-fundamentals/v/3.8/elements-in-a-mule-flow[Mule Flows] and link:/mule-fundamentals/v/3.8/global-elements[Mule Global Elements].
+This document assumes that you are familiar with Mule, link:/mule-user-guide/v/3.8/anypoint-connectors[Anypoint Connectors], and link:/mule-fundamentals/v/3.8/anypoint-studio-essentials[Anypoint Studio Essentials]. To increase your familiarity with Studio, consider completing the link:/mule-fundamentals/v/3.8/basic-studio-tutorial[Basic Studio Tutorial]. Further, this page assumes that you have a basic understanding of link:/mule-fundamentals/v/3.8/elements-in-a-mule-flow[Mule Flows] and link:/mule-fundamentals/v/3.8/global-elements[Global Elements].
 
 To use the Cookbook connector, you must have the following:
 
-* **Anypoint Studio:** if you don't use Anypoint Studio for development, follow the instructions to install the Cookbook Maven dependencies into your `pom.xml` file.
+* **Anypoint Studio:** if you don't use Anypoint Studio for development, follow the link:#mavenized-app[instructions] on specifying Maven dependencies in your `pom.xml` file.
 * **Cookbook Service:** you can install it locally or use the service endpoint exposed in CloudHub. For Authentication details, refer to http://mulesoft.github.io/mule-cookbook-tutorial/#_authentication[Cookbook Authentication] section.
 
 
@@ -155,17 +155,17 @@ TIP: Get familiar with link:/mule-fundamentals/v/3.8/global-elements[Global Elem
 The connector supports the following authentication types:
 
 * Simple configuration with a username and password that provides a token to send with each Cookbook service request (as part of the request).
-
 * link:http://oauth.net/2/[OAuth 2.0]
+* Before you choose your connector configuration, get your link:/anypoint-connector-devkit/v/3.8/devkit-tutorial#authentication[Authentication Credentials]
 
 NOTE: For more information about OAuth and Mule, refer to link:https://docs.mulesoft.com/mule-user-guide/v/3.8/using-a-connector-to-access-an-oauth-api[Using a Connector to Access an OAuth API].
 
-==== Studio Visual Editor
+==== Anypoint Studio Visual Editor
 
 * Click the *Global Elements* tab at the base of the canvas.
 * On the *Global Mule Configuration Elements* screen, click *Create*.
-* In the *Choose Global Type* wizard, expand *Connector Configuration* and select one of the provided options:
-  ** Cookbook: Configuration (basic authentication)
+* Review the authentication options. In the *Choose Global Type* wizard, expand *Connector Configuration* and select one of the provided options:
+  ** Cookbook: Configuration (Basic Authentication)
   ** Cookbook: OAuth 2.0 (OAuth 2.0 authentication)
 * Click *Ok*.
 
@@ -183,7 +183,7 @@ image:cookbook_config_global.png["Global Element Configuration"]
 |`Address`| The SOAP endpoint of your _local_ Cookbook service or use the default to connect to the _remote_ Cloudhub cookbook service instance.
 |===
 
-* For **Cookbook: OAuth 2.0** - configure the parameters according to instructions below.
+* For **Cookbook: OAuth 2.0** - configure the parameters according to the instructions below.
 
 image:cookbook_oauth_global.png["Global Element Configuration"]
 
@@ -232,6 +232,8 @@ The connector supports the following list of operations:
 
 [NOTE]
 In Anypoint Connector developer speak, operations are referred to as "message processors". Data is handled in Mule applications as a "message", which has a defined https://docs.mulesoft.com/mule-fundamentals/v/3.8/mule-message-structure[structure].
+
+Efficiently access the data types that are accepted and returned by each operation the "old-fashioned" way by searching for the operations as defined, e.g. link:https://github.com/mulesoft/mule-cookbook/blob/ecfb1baf8340585b3d9389802cbdf98e63a8faef/sdk-client/src/main/java/com/cookbook/tutorial/client/MuleCookBookClient.java[in the WSDL file].
 
 [cols="30%,70%"]
 |===
@@ -374,13 +376,30 @@ Now let's use the connector to invoke web service operations exposed by the Cook
 Common use case scenarios for the Cookbook connector are listed below:
 
 * Single CRUD operations: Create, Get, Update, and Delete a recipe or an ingredient from the repository.
-* Multiple CRUD operations: Create, Get, Update, and Delete a list of recipes or ingredients in one call.
+* Multiple CRUD operations on a list of recipes or ingredients, in one call.
 * Get recently added recipes
 
-=== Update Operation
+=== Sample UI for the Cookbook Service
+
+Test out the operations inside a clean cookbook user interface, available to you after running one of the  links:https://github.com/mulesoft/cookbook-connector/tree/release/1.0.0/demo[demo Mule applications], for example `demo-crud-ingredient`, which uses the Cookbook connector.
+
+. Add the credentials to the `mule-app.properties` file
+.. `cookbook.username=admin`
+.. `cookbook.password=admin`
+. Right-click the project in the *Package Explorer* in Anypoint Studio. *Run As* > *Mule Application*
+. The app makes the interface accessible at `0.0.0.0:8081`. Hit that endpoint in your browser to start using the interface to make calls to Cookbook.
+
+.demo-crud-ingredient HTML interface
+image:user-manual-722cf.png[CRUD html interface]
+
+[NOTE]
+Inspect this demo application's Mule flows and corresponding XML in Anypoint Studio to learn how the *HTTP listener*, *Cookbook connector* and other components are used to manage the cookbook service calls and passage of data through the Mule application.
+
+=== Example Using the Update Operation
 
 Update the *quantity* and *unit type* of an existing Ingredient.
 
+.Flow shown from screenshot in Anypoint Studio 5.x UI and earlier
 image:ck_example_flow.png[Example Update Flow]
 
 === Anypoint Studio Visual Editor | XML Editor
