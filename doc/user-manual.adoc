@@ -144,7 +144,7 @@ NOTE: Read more about link:/mule-user-guide/v/3.8/installing-connectors[Installi
 
 
 [[configuring]]
-=== Configure Cookbook Connector
+=== Configure the Cookbook Connector
 
 To use the Cookbook connector in your Mule application, you must configure a *global element* for the Cookbook connector that can be used by all the Cookbook connectors in the application.
 
@@ -160,19 +160,23 @@ The connector supports the following authentication types:
 
 NOTE: For more information about OAuth and Mule, refer to link:https://docs.mulesoft.com/mule-user-guide/v/3.8/using-a-connector-to-access-an-oauth-api[Using a Connector to Access an OAuth API].
 
-==== Anypoint Studio Visual Editor
+==== Creating Global Element for the Cookbook Connector Configuration
 
-* Click the *Global Elements* tab at the base of the canvas.
-* On the *Global Mule Configuration Elements* screen, click *Create*.
-* Review the authentication options. In the *Choose Global Type* wizard, expand *Connector Configuration* and select one of the provided options:
+. Click the *Global Elements* tab at the base of the Anypoint Studio canvas.
++
+image:global-element-create-annot.png[create global element]
++
+. On the *Global Mule Configuration Elements* screen, click *Create*.
+. Type `cookbook` into the Search bar.
+. In the *Choose Global Type* wizard, expand *Connector Configuration* and select one of the provided options:
   ** Cookbook: Configuration (Basic Authentication)
   ** Cookbook: OAuth 2.0 (OAuth 2.0 authentication)
-* Click *Ok*.
-
+. Click *Ok*.
++
 image:cookbook_config_global_wizard.png["Global Element Configuration Wizard"]
-
-* For **Cookbook: Configuration:** Configure the parameters according to instructions below.
-
++
+. For **Cookbook: Configuration:** Configure the parameters according to instructions below.
++
 image:cookbook_config_global.png["Global Element Configuration"]
 
 [options="header,autowidth"]
