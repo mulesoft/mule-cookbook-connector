@@ -96,6 +96,30 @@ If you are manually coding the Mule application in Studio's XML editor or other 
 ----
 
 
+
+[[installing]]
+== Install the Cookbook Connector
+
+The Cookbook connector is for learning purposes and can be used as a "skeleton" connector to build on. The connector structure should be helpful as you develop SDK-based connectors using the *Anypoint Connector DevKit framework*.
+
+[WARNING]
+Cookbook connector should not be used in production environments.
+
+To install the Cookbook connector in Anypoint Studio, follow the steps below:
+
+* Open Anypoint Studio and got to *Help* > *Install New Software*
+* Select *Anypoint Connectors Update Site - http://repository.mulesoft.org/connectors/releases/3.5.0*
+* Locate *Cookbook Connector (Mule 3.x.y+)*
+
+* Click *Next* and accept the License Agreement.
+* You are prompted to restart Studio.
+* After Anypoint Studio restarts, the Cookbook connector should appear in your Studio palette: +
+
+image:cookbook_install_palette.png["Anypoint Studio palette - Cookbook Connector"]
+
+NOTE: Read more about link:/mule-user-guide/v/3.8/installing-connectors[Installing Connectors].
+
+
 [[mavenized-app]]
 == Using the Cookbook Connector in a Mavenized Mule App
 
@@ -116,43 +140,18 @@ Inside the `<version>` tags, put the desired version number, the word `RELEASE` 
 NOTE: The latest version of the Cookbook connector at time of writing, is 1.0.0.
 
 
-[[install-and-config]]
-== Install and Configure the Cookbook Connector
-
-The Cookbook connector is for learning purposes and can be used as a "skeleton" connector to build on. The connector structure should be helpful as you develop SDK-based connectors using the *Anypoint Connector DevKit framework*.
-
-[WARNING]
-Cookbook connector should not be used in production environments.
-
-
-[[installing]]
-=== Install Cookbook Connector
-
-To install Cookbook connector in Anypoint Studio, follow the steps below:
-
-* Open Anypoint Studio and got to *Help* > *Install New Software*
-* Select *Anypoint Connectors Update Site - http://repository.mulesoft.org/connectors/releases/3.5.0*
-* Locate *Cookbook Connector (Mule 3.x.y+)*
-
-* Click *Next* and accept the License Agreement.
-* You are prompted to restart Studio.
-* After Anypoint Studio restarts, the Cookbook connector should appear in your Studio palette: +
-
-image:cookbook_install_palette.png["Anypoint Studio palette - Cookbook Connector"]
-
-NOTE: Read more about link:/mule-user-guide/v/3.8/installing-connectors[Installing Connectors].
-
-
 [[configuring]]
-=== Configure the Cookbook Connector
+== Configure the Cookbook Connector
 
-To use the Cookbook connector in your Mule application, you must configure a *global element* for the Cookbook connector that can be used by all the Cookbook connectors in the application.
+Global elements for connectors are used for the purpose of storing important connection and other details.
+
+To use the Cookbook connector in your Mule application, you must define a *global element* that can be used by one or many Cookbook connectors instances in an application or shared domain for connector user authentication and subsequent authorized use.
 
 TIP: Get familiar with link:/mule-fundamentals/v/3.8/global-elements[Global Elements].
 
 === Setting up Access to the Cookbook Service
 
-The connector supports the following authentication types:
+The Cookbook service can be accessed by these authentication types:
 
 * Simple configuration with a username and password that provides a token to send with each Cookbook service request (as part of the request).
 * link:http://oauth.net/2/[OAuth 2.0]
@@ -265,7 +264,7 @@ If you choose OAuth 2.0 authentication, you are presented with two additional op
 
 
 [NOTE]
-If using OAuth 2.0 you must *Authorize* before executing any other operations.
+If using OAuth 2.0 you must *Authorize* before executing any subsequent operations on the service.
 
 ==== Inbound Message Processors
 
@@ -385,7 +384,7 @@ Common use case scenarios for the Cookbook connector are listed below:
 
 === Sample UI for the Cookbook Service
 
-Test out the operations inside a clean cookbook user interface, available to you after running one of the  links:https://github.com/mulesoft/cookbook-connector/tree/release/1.0.0/demo[demo Mule applications], for example `demo-crud-ingredient`, which uses the Cookbook connector.
+Test out the operations inside a clean cookbook user interface, available to you after running one of the  link:https://github.com/mulesoft/cookbook-connector/tree/master/demo[demo Mule applications], for example `demo-crud-ingredient`, which uses the Cookbook connector.
 
 . Add the credentials to the `mule-app.properties` file
 .. `cookbook.username=admin`
@@ -580,7 +579,7 @@ image:ck_example_result.png[Example Update Flow]
 [[demos]]
 === Demos
 
-You can download fully working examples from link:http://mulesoft.github.io/cookbook-connector[here]
+You can download fully working examples from link:link:https://github.com/mulesoft/cookbook-connector/tree/master/demo[demo Mule applications][here]
 
 
 [[tips]]
