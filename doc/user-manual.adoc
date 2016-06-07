@@ -397,7 +397,7 @@ Test out the operations inside a helpful user interface, available to you after 
 image:user-manual-722cf.png[CRUD html interface]
 
 [NOTE]
-Inspect this link:https://github.com/mulesoft/cookbook-connector/blob/master/demo/demo-crud-ingredient/src/main/app/demo-crud-ingredient.xml[demo Mule application's] Mule flows' corresponding XML to learn how the *HTTP listener*, *Cookbook connector* and other components are used to manage the cookbook service calls and passage of data through the Mule application.
+Inspect this link:https://github.com/mulesoft/cookbook-connector/blob/master/demo/demo-crud-ingredient/src/main/app/demo-crud-ingredient.xml[demo Mule application] corresponding XML to learn how the *HTTP listener*, *Cookbook connector* and other components are used to manage the cookbook service calls and passage of data through the Mule application.
 
 === Using the Update Operation
 
