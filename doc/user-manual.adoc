@@ -25,7 +25,7 @@ toc::[toc]
 * Provide a starting point for usage of an Anypoint Connector in the Anypoint Studio IDE to create a working Mule application
 * Compliment the link:https://docs.mulesoft.com/anypoint-connector-devkit/v/3.8/devkit-tutorial[Anypoint Connector Development Tutorial], for experienced Java developers looking to code their own connector.
 
-Whether or not you are new to connectors, read this guide with the understanding that coding an Anypoint Connector generally means writing a framework for managing connections, and supporting operations of an API of interest.
+Whether or not you are new to connectors, read this guide with the understanding that developing an Anypoint Connector generally means writing a framework for managing secure connections and supporting typical service operations.
 
 [IMPORTANT]
 *Anypoint Connectors* are designed and built to hook into a target service to execute tasks. +
