@@ -6,13 +6,14 @@
 
 image:connector-cookbook-1.png[cookbook img]
 
+Use this Cookbook connector user guide and our examples to get started with Mule application development in Anypoint Studio.
+
 [NOTE]
 ====
-Read on to see how the *Cookbook Connector* connects to the link:#cookbook-api[Cookbook API and Service].
+The *Cookbook Connector* is used to connect to the link:#cookbook-api[Cookbook Service].
+View the release ntoes link:/release-notes/cookbook-connector-release-notes[here].
 
-You may want to read the link:/release-notes/cookbook-connector-release-notes[Release Notes] for this connector before trying it out.
-
-To dive into developing a Mule-compatible connector right away, get started with the tried and true link:https://docs.mulesoft.com/anypoint-connector-devkit/v/3.8/devkit-tutorial[Anypoint Connector DevKit Tutorial].
+To dive into developing a Mule-compatible connector like Cookbook connector right away, see the link:https://docs.mulesoft.com/anypoint-connector-devkit/v/3.8/devkit-tutorial[Anypoint Connector DevKit Tutorial].
 ====
 
 toc::[toc]
