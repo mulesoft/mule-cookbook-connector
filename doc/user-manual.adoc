@@ -303,7 +303,7 @@ Default value is `#[payload]`
 |===
 
 [TIP]
-Recall that the *global element* is the normal storage unit for connector configuration(s) in a Mule application.
+Recall that the *global element* is the normal "storage unit" for connector configuration(s) in a Mule application.
 
 [[cql-syntax]]
 === Cookbook Query Language (CQL)
@@ -367,7 +367,7 @@ Typical *CQL queries* accept the following:
 [[connection-pool]]
 == Managing the Connection Pool
 
-While you are not expected to manage connections via this tutorial, you can start to see how to define the pooling profile for the connector manually. You would do this in the *Pooling Profile* tab in the applicable global element for the connector.
+While you are not expected to manage connections for your application's connectors except under exceptional circumstances, you can start to see how to define the pooling profile for the connector manually. You would do this in the *Pooling Profile* tab in the applicable global element for the connector.
 
 For background information on pooling, see link:/mule-user-guide/v/3.8/tuning-performance[Tuning Performance].
 
