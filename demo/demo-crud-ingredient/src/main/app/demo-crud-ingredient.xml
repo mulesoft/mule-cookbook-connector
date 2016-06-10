@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata"
+      xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:cookbook="http://www.mulesoft.org/schema/mule/cookbook" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/cookbook http://www.mulesoft.org/schema/mule/cookbook/current/mule-cookbook.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <cookbook:config name="Cookbook__Configuration" username="${cookbook.username}" password="${cookbook.password}" doc:name="Cookbook: Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <flow name="Html_Form_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
+        <parse-template location="form.html" doc:name="Parse Template"/>
+        <set-property doc:name="Content-Type" propertyName="Content-Type" value="text/html"/>
+        <exception-strategy ref="Choice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="Create_Ingredient_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/create" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Ingredient fields">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	name: payload.createName,
+	quantity: payload.createQuantity,
+	unit: payload.createUnit
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="++++++++++ #[flow.name] | Params: #[payload] ++++++++++" level="INFO" doc:name="Params"/>
+        <cookbook:create config-ref="Cookbook__Configuration" type="Ingredient" doc:name="Create" />
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="++++++++++ #[flow.name] | Result: #[payload] ++++++++++" level="INFO" doc:name="Result"/>
+        <exception-strategy ref="Choice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="Get_Ingredient_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/get" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Ingredient ID">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.getId]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="++++++++++ #[flow.name] | Params: #[payload] ++++++++++" level="INFO" doc:name="Params"/>
+        <cookbook:get config-ref="Cookbook__Configuration" type="Ingredient" id="#[payload]" doc:name="Get"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="++++++++++ #[flow.name] | Result: #[payload] ++++++++++" level="INFO" doc:name="Result"/>
+        <exception-strategy ref="Choice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="Update_Ingredient_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/update" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Ingredient Fields">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	id: payload.updateId,
+	name: payload.updateName,
+	quantity: payload.updateQuantity,
+	unit: payload.updateUnit
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="++++++++++ #[flow.name] | Params: #[payload] ++++++++++" level="INFO" doc:name="Params"/>
+        <cookbook:update config-ref="Cookbook__Configuration" type="Ingredient" doc:name="Update"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="++++++++++ #[flow.name] | Result: #[payload] ++++++++++" level="INFO" doc:name="Result"/>
+        <exception-strategy ref="Choice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="Delete_Ingredient_Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/delete" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Ingredient ID">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+
+	payload.deleteId
+]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="++++++++++ #[flow.name] | Params: #[payload] ++++++++++" level="INFO" doc:name="Params"/>
+        <cookbook:delete config-ref="Cookbook__Configuration" id="#[payload]" doc:name="Delete"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="++++++++++ #[flow.name] | Result: #[payload] ++++++++++" level="INFO" doc:name="Result"/>
+        <exception-strategy ref="Choice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <choice-exception-strategy name="Choice_Exception_Strategy">
+        <catch-exception-strategy when="#[exception.causedBy(org.mule.modules.cookbook.exception.CookbookException)]" doc:name="Catch Cookbook Exception Strategy">
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <set-payload value="#[exception.cause]" doc:name="Return Error Object"/>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy doc:name="Catch Generic Exception Strategy">
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <set-payload value="#[exception.causeException]" doc:name="Return Error Object"/>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+        </catch-exception-strategy>
+    </choice-exception-strategy>
+</mule>

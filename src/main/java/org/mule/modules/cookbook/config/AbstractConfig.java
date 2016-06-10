@@ -18,7 +18,7 @@ import com.cookbook.tutorial.client.MuleCookBookClient;
 public abstract class AbstractConfig {
 
     /**
-     * Description for address
+     * Indicates the remote service address.
      */
     @Configurable
     @Default("http://devkit-cookbook.cloudhub.io/soap")

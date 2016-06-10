@@ -5,53 +5,44 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.InvalidEntityException;
 import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.cookbook.tutorial.service.SessionExpiredException;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+import org.mule.modules.cookbook.exception.CookbookException;
+import org.mule.modules.cookbook.utils.EntityType;
 
-import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.fail;
 
-public class DeleteTestCases extends AbstractTestCase<CookbookConnector> {
+public class DeleteTestCases extends AbstractTestCases {
 
-    Map<String, Object> testData;
-
-    public DeleteTestCases() {
-        super(CookbookConnector.class);
-    }
+    private Integer entityId;
 
     @Before
-    public void setup() throws Exception {
-        testData = TestDataBuilder.deleteTestData();
-        final Map<String, Object> ingredient = (Map<String, Object>) testData.get("ingredient-ref");
-        final Map<String, Object> objectMap = getConnector().create((String) testData.get("type"), ingredient);
-        testData.put("id", objectMap.get("id"));
+    public void setUp() throws CookbookException {
+        entityId = getConnector().create(EntityType.INGREDIENT.name(), TestDataBuilder.createIngredientData()).getId();
     }
 
     @Test
-    public void testDelete() {
+    public void testDelete() throws CookbookException {
+        getConnector().delete(entityId);
         try {
-            getConnector().delete((Integer) testData.get("id"));
-        } catch (NoSuchEntityException e) {
-            fail(e.getMessage());
-        } catch (SessionExpiredException e) {
-            fail(e.getMessage());
-        }
-        // Check to confirm the object does not exist.
-        try {
-            getConnector().get((String) testData.get("type"), (Integer) testData.get("id"));
-        } catch (InvalidEntityException e) {
-            fail(e.getMessage());
-        } catch (NoSuchEntityException e) {
-            assertTrue(e instanceof NoSuchEntityException);
-        } catch (SessionExpiredException e) {
-            fail(e.getMessage());
+            getConnector().get(EntityType.INGREDIENT.name(), entityId);
+            fail();
+        } catch (CookbookException e) {
+            assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
         }
     }
+
+    @Test
+    public void testDeleteEntityNotFound() {
+        try {
+            getConnector().delete(-1);
+            fail();
+        } catch (CookbookException e) {
+            assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
+        }
+    }
+
 }

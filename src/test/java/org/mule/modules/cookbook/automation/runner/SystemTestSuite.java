@@ -7,13 +7,14 @@ package org.mule.modules.cookbook.automation.runner;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.mule.modules.cookbook.automation.system.BasicConfigSystemTestCases;
-import org.mule.modules.cookbook.automation.system.OAuthConfigSystemTestCases;
+import org.junit.runners.Suite.SuiteClasses;
+import org.mule.modules.cookbook.automation.system.BasicConfigTestCases;
+import org.mule.modules.cookbook.automation.system.OAuth2ConfigTestCases;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-        BasicConfigSystemTestCases.class,
-        OAuthConfigSystemTestCases.class
+@SuiteClasses({
+        BasicConfigTestCases.class,
+        OAuth2ConfigTestCases.class
 })
 public class SystemTestSuite {
 

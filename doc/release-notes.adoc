@@ -6,7 +6,9 @@
 Anypoint™ Connector for Cookbook Service provides the ability to save and query recipes.
 This connector is intended to help newbie's learn and develop SDK based Connectors using Devkit.
 
-*Connector Guide*: link:/mule-user-guide/v/3.7/cookbook-connector[Cookbook Connector]
+*Guide*: link:/mule-user-guide/v/3.8/cookbook-connector[Cookbook Connector]
+
+== Cookbook Connector 1.0.0 - June 2, 2016
 
 === Version 1.0.0 Compatibility
 
@@ -17,14 +19,18 @@ The Cookbook Connector is compatible with:
 |Mule Runtime|3.6.x or higher
 |Cookbook Service SDK|1.0.0
 |Java|1.7.0_x
-|Anypoint Studio|5.2 or higher
+|Anypoint Studio|5.x or higher
 |===
 
 === Version 1.0.0 Features
 
-- Supports OAuth 2.0 and Username/Password based Configuration.
-- Supports Query Pagination and also acts an Inbound endpoint to poll the result.
-- Supports DataSense and improved exception handling.
+* Supports two types of authentication:
+  ** Username/Password based Configuration
+  ** OAuth 2.0
+* DataSense.
+* Query Pagination, although currently limited to two queries: `GET ALL FROM INGREDIENT' and `GET ALL FROM RECIPE`.
+* Ability to act as an Inbound Endpoint (Source) to poll results form the Cookbook repository.
+* Custom transformer to enable conversion from Ingredient or Recipe to Map.
 
 === Version 1.0.0 Fixed in this Release
 
@@ -36,5 +42,5 @@ None.
 
 === See Also
 
-* To learn how you can use the features provided by Devkit refer to link:http://mulesoft.github.io/mule-cookbook-tutorial/[Mule Cookbook Tutorial]
-* Learn how to link:/mule-fundamentals/v/3.7/anypoint-exchange[Install Anypoint Connectors] using Anypoint Exchange.
+* To learn how you can use the features provided by Devkit refer to link:http://mulesoft.github.io/mule-cookbook-tutorial/[Mule Cookbook Tutorial].
+* Learn how to link:/mule-fundamentals/v/3.8/anypoint-exchange[Install Anypoint Connectors] using Anypoint Exchange.

@@ -5,59 +5,58 @@
  */
 package org.mule.modules.cookbook.automation.functional;
 
-import com.cookbook.tutorial.service.InvalidEntityException;
+import com.cookbook.tutorial.service.Ingredient;
 import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.cookbook.tutorial.service.SessionExpiredException;
-import com.cookbook.tutorial.service.UnitType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.modules.cookbook.CookbookConnector;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+import org.mule.modules.cookbook.exception.CookbookException;
+import org.mule.modules.cookbook.utils.EntityType;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.fail;
 
-public class UpdateTestCases extends AbstractTestCase<CookbookConnector> {
+public class UpdateTestCases extends AbstractTestCases {
 
-    Map<String, Object> testData;
-    Map<String, Object> objectMap;
-
-    public UpdateTestCases() {
-        super(CookbookConnector.class);
-    }
+    private Map<String, Object> testData;
+    private Integer entityId;
 
     @Before
-    public void setup() throws Exception {
-        testData = TestDataBuilder.updateTestData();
-        Map<String, Object> ingredient = (Map<String, Object>) testData.get("ingredient-ref");
-        objectMap = getConnector().create((String) testData.get("type"), ingredient);
-    }
-
-    @Test
-    public void testUpdate() {
-        try {
-            Map<String, Object> ingredient = (Map<String, Object>) testData.get("ingredient-update-ref");
-            // update the objectMap.
-            objectMap.put("unit", ingredient.get("unit"));
-            objectMap.put("quantity", ingredient.get("quantity"));
-            final Map<String, Object> updatedObjectMap = getConnector().update((String) testData.get("type"), objectMap);
-            assertEquals(((UnitType) ingredient.get("unit")).name(), updatedObjectMap.get("unit"));
-            assertEquals(Double.valueOf((String) ingredient.get("quantity")), updatedObjectMap.get("quantity"));
-        } catch (NoSuchEntityException e) {
-            fail(e.getMessage());
-        } catch (SessionExpiredException e) {
-            fail(e.getMessage());
-        } catch (InvalidEntityException e) {
-            fail(e.getMessage());
-        }
+    public void setUp() throws CookbookException {
+        testData = TestDataBuilder.updateIngredientData();
+        entityId = getConnector().create(EntityType.INGREDIENT.name(), TestDataBuilder.createIngredientData()).getId();
+        testData.put("id", entityId);
     }
 
     @After
-    public void tearDown() throws Exception {
-        getConnector().delete((Integer) objectMap.get("id"));
+    public void tearDown() throws CookbookException {
+        silentlyDelete(entityId);
+    }
+
+    @Test
+    public void testUpdate() throws CookbookException {
+        Ingredient updated = (Ingredient) getConnector().update(EntityType.INGREDIENT.name(), testData);
+        assertThat(updated.getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
+        assertThat(updated.getUnit().name(), equalTo(testData.get("unit")));
+
+        // Double check
+        Ingredient current = (Ingredient) getConnector().get(EntityType.INGREDIENT.name(), entityId);
+        assertThat(current.getQuantity(), equalTo(Double.valueOf((String) testData.get("quantity"))));
+        assertThat(current.getUnit().name(), equalTo(testData.get("unit")));
+    }
+
+    @Test
+    public void testUpdateWithoutId() throws CookbookException {
+        try {
+            getConnector().update(EntityType.INGREDIENT.name(), TestDataBuilder.updateIngredientWithoutIdData());
+            fail();
+        } catch (CookbookException e) {
+            assertThat(e.getCause(), instanceOf(NoSuchEntityException.class));
+        }
     }
 
 }

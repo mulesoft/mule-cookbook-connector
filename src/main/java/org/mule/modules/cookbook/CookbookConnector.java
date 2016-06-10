@@ -5,12 +5,28 @@
  */
 package org.mule.modules.cookbook;
 
-import com.cookbook.tutorial.client.ICookbookCallback;
-import com.cookbook.tutorial.service.*;
+import com.cookbook.tutorial.service.CookBookEntity;
+import com.cookbook.tutorial.service.Description;
+import com.cookbook.tutorial.service.Ingredient;
+import com.cookbook.tutorial.service.InvalidEntityException;
+import com.cookbook.tutorial.service.InvalidTokenException;
+import com.cookbook.tutorial.service.NoSuchEntityException;
+import com.cookbook.tutorial.service.Recipe;
+import com.cookbook.tutorial.service.SessionExpiredException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mule.api.annotations.*;
-import org.mule.api.annotations.lifecycle.OnException;
+import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
+import org.mule.api.annotations.Config;
+import org.mule.api.annotations.Connector;
+import org.mule.api.annotations.MetaDataScope;
+import org.mule.api.annotations.Paged;
+import org.mule.api.annotations.Processor;
+import org.mule.api.annotations.Query;
+import org.mule.api.annotations.ReconnectOn;
+import org.mule.api.annotations.Source;
+import org.mule.api.annotations.SourceStrategy;
+import org.mule.api.annotations.Transformer;
 import org.mule.api.annotations.oauth.OAuthProtected;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.MetaDataKeyParam;
@@ -18,11 +34,17 @@ import org.mule.api.annotations.param.MetaDataKeyParamAffectsType;
 import org.mule.api.annotations.param.RefOnly;
 import org.mule.api.callback.SourceCallback;
 import org.mule.modules.cookbook.config.AbstractConfig;
-import org.mule.modules.cookbook.datasense.DataSenseResolver;
-import org.mule.modules.cookbook.handler.CookbookHandler;
-import org.mule.modules.cookbook.pagination.CookbookPagingDelegate;
+import org.mule.modules.cookbook.datasense.CreateMetaData;
+import org.mule.modules.cookbook.datasense.DescribeMetaData;
+import org.mule.modules.cookbook.datasense.EntityMetaData;
+import org.mule.modules.cookbook.datasense.UpdateMetaData;
+import org.mule.modules.cookbook.exception.CookbookException;
+import org.mule.modules.cookbook.pagination.QueryPagingDelegate;
+import org.mule.modules.cookbook.utils.EntityType;
 import org.mule.streaming.PagingConfiguration;
 import org.mule.streaming.ProviderAwarePagingDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -32,220 +54,328 @@ import java.util.Map;
  *
  * @author MuleSoft, Inc.
  */
-@ReconnectOn(exceptions = { SessionExpiredException.class
-})
+@ReconnectOn(exceptions = { SessionExpiredException.class })
 @Connector(name = "cookbook", friendlyName = "Cookbook", minMuleVersion = "3.6")
-@MetaDataScope(DataSenseResolver.class)
 public class CookbookConnector {
 
+    private static final Logger logger = LoggerFactory.getLogger(CookbookConnector.class);
+
     @Config
-    AbstractConfig config;
+    private AbstractConfig config;
+
+    @NotNull
+    public AbstractConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(@NotNull AbstractConfig config) {
+        this.config = config;
+    }
 
     /**
-     * Returns the list of recently added recipes
-     * <p/>
+     * Allows the caller to create a new Ingredient or Recipe.
+     * <p>
      *
-     * @return A list of the recently added recipes
+     * @param type
+     *            Type of entity: {@link Ingredient} or {@link Recipe}.
+     * @param params
+     *            Map containing the data of the entity to be created.
+     * @return {@link CookBookEntity} The created entity.
+     * @throws CookbookException
+     *             If any of the provided entity parameters is incorrect/missing or if the user session has expired.
      */
     @OAuthProtected
-    @Processor
+    @Processor(friendlyName = "Create")
+    @MetaDataScope(CreateMetaData.class)
+    public CookBookEntity create(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type, @Default("#[payload]") @RefOnly final Map<String, Object> params)
+            throws CookbookException {
+        Preconditions.checkNotNull(params);
+        try {
+            return config.getClient().create(convertToCookBookEntity(EntityType.find(type), params));
+        } catch (InvalidEntityException | SessionExpiredException e) {
+            logger.error("Unable to create entity of type {}", type, e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows de caller to create multiple new Ingredients and/or Recipes in a single execution.
+     * <p>
+     *
+     * @param entities
+     *            List of {@link CookBookEntity} entities to be created. It can contain a combination of Ingredients and Recipes.
+     * @return List <{@link CookBookEntity}> The list of created entities.
+     * @throws CookbookException
+     *             If any of the provided entity parameters is incorrect/missing or if the user session has expired.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Create multiple")
+    @MetaDataScope(CreateMetaData.class)
+    public List<CookBookEntity> createMultiple(@RefOnly @Default("#[payload]") final List<CookBookEntity> entities) throws CookbookException {
+        Preconditions.checkNotNull(entities);
+        try {
+            return config.getClient().addList(entities);
+        } catch (InvalidEntityException | SessionExpiredException e) {
+            logger.error("Unable to create multiple entities", e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows the caller to delete an entity (Ingredient or Recipe) by its ID.
+     * <p>
+     *
+     * @param id
+     *            ID of the entity to delete.
+     * @throws CookbookException
+     *             If the specified entity does not exist or if the user session has expired.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Delete")
+    public void delete(@Default("1") final Integer id) throws CookbookException {
+        Preconditions.checkNotNull(id);
+        try {
+            config.getClient().delete(id);
+        } catch (NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to delete entity with ID {}", id, e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows the caller to delete multiple entities (Ingredient or Recipe) by their ID.
+     * <p>
+     *
+     * @param entityIds
+     *            List of IDs of the entities to delete.
+     * @throws CookbookException
+     *             If the specified entity does not exist or if the user session has expired.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Delete multiple")
+    public void deleteMultiple(@RefOnly @Default("#[payload]") final List<Integer> entityIds) throws CookbookException {
+        Preconditions.checkNotNull(entityIds);
+        try {
+            config.getClient().deleteList(entityIds);
+        } catch (NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to delete multiple entities with IDs {}", entityIds.toString(), e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows the caller to retrieve all fields and data types of a Ingredient or Recipe object.
+     * <p>
+     *
+     * @param type
+     *            Type of entity: Ingredient or Recipe.
+     * @throws CookbookException
+     *             If the provided token is invalid, if the provided parameter is invalid, if the entity type does not exist, or if the user session has expired.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Describe")
+    @MetaDataScope(DescribeMetaData.class)
+    public Description describeEntity(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final String type) throws CookbookException {
+        Preconditions.checkNotNull(type);
+        try {
+            return config.getClient().describeEntity(EntityType.getClassFromType(EntityType.find(type)));
+        } catch (InvalidTokenException | InvalidEntityException | NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to describe entity of type {}", type, e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows the caller to retrieve a {@link CookBookEntity} based on its ID.
+     * <p>
+     *
+     * @param type
+     *            Type of the entity.
+     * @param id
+     *            ID of the entity.
+     * @return {@link CookBookEntity} The requested {@link CookBookEntity}.
+     * @throws CookbookException
+     *             If the specified entity does not exist or if the user session has expired.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Get")
+    @MetaDataScope(EntityMetaData.class)
+    public CookBookEntity get(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) final String type, @Default("1") final Integer id) throws CookbookException {
+        Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(id);
+        try {
+            return config.getClient().get(id);
+        } catch (NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to retrieve entity with ID {}", id, e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows the caller to retrieve multiple entities by their IDs.
+     * <p>
+     *
+     * @return The requested list of {@link CookBookEntity}.
+     * @throws CookbookException
+     *             If the specified entity does not exist or if the user session has expired.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Get multiple")
+    @MetaDataScope(EntityMetaData.class)
+    public List<CookBookEntity> getMultiple(@RefOnly @Default("#[payload]") final List<Integer> entityIds) throws CookbookException {
+        Preconditions.checkNotNull(entityIds);
+        try {
+            return config.getClient().getList(entityIds);
+        } catch (NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to retrieve multiple entities with IDs {}", entityIds.toString(), e);
+            throw new CookbookException(e);
+        }
+    }
+
+    /**
+     * Allows the caller to return the list of recently added Recipes.
+     * <p>
+     *
+     * @return List of recently added {@link Recipe}.
+     */
+    @OAuthProtected
+    @Processor(friendlyName = "Get recently added recipes")
+    @MetaDataScope(EntityMetaData.class)
     public List<Recipe> getRecentlyAdded() {
         return config.getClient().getRecentlyAdded();
     }
 
     /**
-     * Constantly polls the system to return the recently added recipes.
-     * <p/>
+     * Polls the system every X seconds (default value is 10 sec) to fetch the recently added Recipes.
+     * <p>
      *
      * @param callback
-     *            The callback that will hook the result into mule event.
-     * @throws Exception
-     *             When the source fails.
+     *            A {@link SourceCallback} object that will hook the result into the Mule Event.
+     * @throws CookbookException
+     *             If the poll connection is interrupted or an error occurred in the Cookbook service.
      */
     @OAuthProtected
-    @Source(sourceStrategy = SourceStrategy.POLLING, pollingPeriod = 10000)
-    public void getRecentlyAddedSource(final SourceCallback callback) throws Exception {
-
-        if (this.getConfig().getClient() != null) {
-            // Every 5 seconds our callback will be executed
-            this.getConfig().getClient().getRecentlyAdded(new ICookbookCallback() {
-
-                public void execute(List<Recipe> recipes) throws Exception {
-                    callback.process(recipes);
-                }
-            });
-
-            if (Thread.interrupted()) {
-                throw new InterruptedException();
-            }
+    @Source(friendlyName = "Get recently added recipes", sourceStrategy = SourceStrategy.POLLING, pollingPeriod = 10000)
+    public void getRecentlyAddedSource(final SourceCallback callback) throws CookbookException {
+        try {
+            logger.info("Creating connection to wait for incoming Recipes...");
+            callback.process(getRecentlyAdded());
+        } catch (Exception e) {
+            logger.error("Unable to create connection to the Cookbook service", e);
+            throw new CookbookException(e);
         }
     }
 
     /**
-     * Create Recipes and Ingredients
-     * <p/>
+     * Allows the caller to update an existing {@link CookBookEntity}.
+     * <p>
      *
      * @param type
-     *            Type of the entity
+     *            Type of the entity.
      * @param entity
-     *            Ingredient/Recipe to be created
-     * @return return Id of the entity from the system.
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws InvalidEntityException
-     *             Exception thrown when an wrong entity or type is mapped to the entity parameter.
+     *            Map containing the data of the entity to be updated.
+     * @return The updated {@link CookBookEntity}.
+     * @throws CookbookException
+     *             If any of the provided entity parameters is incorrect/missing, if the entity does not exist, or if the user session has expired.
      */
     @OAuthProtected
-    @Processor
-    @OnException(handler = CookbookHandler.class)
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> create(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String type, @Default("#[payload]") @RefOnly Map<String, Object> entity)
-            throws InvalidEntityException, SessionExpiredException {
-        ObjectMapper m = new ObjectMapper();
-        CookBookEntity input = getCookBookEntity(type, entity, m);
-        return m.convertValue(this.getConfig().getClient().create(input), Map.class);
+    @Processor(friendlyName = "Update")
+    @MetaDataScope(UpdateMetaData.class)
+    public CookBookEntity update(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) final String type, @RefOnly @Default("#[payload]") final Map<String, Object> entity)
+            throws CookbookException {
+        Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(entity);
+        try {
+            return config.getClient().update(convertToCookBookEntity(EntityType.find(type), entity));
+        } catch (InvalidEntityException | NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to update entity with params {}", entity, e);
+            throw new CookbookException(e);
+        }
     }
 
     /**
-     * Update the existing entities (Recipes/Ingredients)
-     * <p/>
+     * Allows the caller to update one or more existing {@link CookBookEntity}.
+     * <p>
      *
-     * @param type
-     *            Type of the entity
-     * @param entity
-     *            Entity to be updated
-     * @return return Entity with Id from the system.
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws InvalidEntityException
-     *             Exception thrown when an wrong entity or type is mapped to the entity parameter.
-     * @throws NoSuchEntityException
-     *             Exception thrown when the specified entity does not exist in the system.
+     * @param entities
+     *            List of {@link CookBookEntity} to be updated.
+     * @return The updated list of {@link CookBookEntity}.
+     * @throws CookbookException
+     *             If any of the provided entity parameters is incorrect/missing, if the entity does not exist, or if the user session has expired.
      */
     @OAuthProtected
-    @Processor
-    @OnException(handler = CookbookHandler.class)
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> update(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String type, @Default("#[payload]") @RefOnly Map<String, Object> entity)
-            throws InvalidEntityException, SessionExpiredException, NoSuchEntityException {
-        ObjectMapper m = new ObjectMapper();
-        CookBookEntity input = getCookBookEntity(type, entity, m);
-        return m.convertValue(this.getConfig().getClient().update(input), Map.class);
+    @Processor(friendlyName = "Update multiple")
+    @MetaDataScope(UpdateMetaData.class)
+    public List<CookBookEntity> updateMultiple(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) @RefOnly @Default("#[payload]") final List<CookBookEntity> entities)
+            throws CookbookException {
+        Preconditions.checkNotNull(entities);
+        try {
+            return config.getClient().updateList(entities);
+        } catch (InvalidEntityException | NoSuchEntityException | SessionExpiredException e) {
+            logger.error("Unable to update multiple entities", e);
+            throw new CookbookException(e);
+        }
     }
 
     /**
-     * Retrieve the entity from the system based on the identifier.
-     * <p/>
-     *
-     * @param type
-     *            Type of the entity
-     * @param id
-     *            Id of the entity to retrieve
-     * @return return Ingredient with Id from the system.
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws InvalidEntityException
-     *             Exception thrown when an wrong entity or type is mapped to the entity parameter.
-     * @throws NoSuchEntityException
-     *             Exception thrown when the specified entity does not exist in the system.
-     */
-    @OAuthProtected
-    @Processor
-    @OnException(handler = CookbookHandler.class)
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> get(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.OUTPUT) String type, @Default("1") Integer id) throws InvalidEntityException,
-            SessionExpiredException, NoSuchEntityException {
-        ObjectMapper m = new ObjectMapper();
-        return m.convertValue(this.getConfig().getClient().get(id), Map.class);
-    }
-
-    /**
-     * Performs delete operation, based on the id corresponding entity is delete from system.
-     * <p/>
-     *
-     * @param id
-     *            Id of the entity to delete
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
-     * @throws NoSuchEntityException
-     *             Exception thrown when the specified entity does not exist in the system.
-     */
-    @OAuthProtected
-    @Processor
-    @OnException(handler = CookbookHandler.class)
-    public void delete(@Default("1") Integer id) throws NoSuchEntityException, SessionExpiredException {
-        this.getConfig().getClient().delete(id);
-    }
-
-    /**
-     * ResultSet retrieved based on the query.
-     * <p/>
+     * Allows the caller to execute calls to the Cookbook service using a query string in CQL (Cookbook Query Language). For a detailed grammar description, please check the
+     * related section in this reference guide.
+     * <p>
      *
      * @param query
-     *            The query
+     *            The query is CQL format.
      * @param pagingConfiguration
-     *            the paging configuration
-     * @return return comment
-     * @throws SessionExpiredException
-     *             Exception thrown when an action is taken by a client who's session has expired.
+     *            The {@link PagingConfiguration} object with the needed parameters for paged queries.
+     * @return The {@link QueryPagingDelegate} that handles the calls to Cookbook to run the query.
+     * @throws CookbookException
+     *             If the provided query string is invalid and cannot be executed or if the user session has expired.
      */
     @OAuthProtected
-    @Processor
+    @Processor(friendlyName = "Query")
     @Paged
-    public ProviderAwarePagingDelegate<Map<String, Object>, CookbookConnector> queryPaginated(final String query, final PagingConfiguration pagingConfiguration)
-            throws SessionExpiredException {
-        return new CookbookPagingDelegate(query, pagingConfiguration.getFetchSize());
-    }
-
-    /**
-     * Basic object mapper that converts list of Recipe entities to List of Map<String, Object> objects.
-     *
-     * @param list
-     *            provide a list of Recipes to be mapped
-     * @return List of Map containing key/value pairs of the Recipe entity.
-     */
-    @Transformer(sourceTypes = { List.class
-    })
-    public static List<Map<String, Object>> recipesToMaps(List<Recipe> list) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(list, new TypeReference<List<Map<String, Object>>>() {
-        });
-    }
-
-    /**
-     * Basic object mapper that converts a Recipe entities to a Map<String, Object> object.
-     *
-     * @param recipe
-     *            provide a Recipe to be mapped
-     * @return Map containing key/value pairs of the Recipe Object.
-     */
-    @Transformer(sourceTypes = { Recipe.class
-    })
-    public static Map<String, Object> recipeToMap(Recipe recipe) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(recipe, new TypeReference<Map<String, Object>>() {
-        });
-    }
-
-    public AbstractConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(AbstractConfig config) {
-        this.config = config;
-    }
-
-    private CookBookEntity getCookBookEntity(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String type, @Default("#[payload]") @RefOnly Map<String, Object> entity,
-            ObjectMapper m) throws InvalidEntityException {
-        CookBookEntity input;
-        if (type.contains("com.cookbook.tutorial.service.Recipe")) {
-            input = m.convertValue(entity, Recipe.class);
-        } else if (type.contains("com.cookbook.tutorial.service.Ingredient")) {
-            input = m.convertValue(entity, Ingredient.class);
-        } else {
-            throw new InvalidEntityException("Don't know how to handle type:" + type);
+    public ProviderAwarePagingDelegate<CookBookEntity, CookbookConnector> query(@Query @RefOnly @Default("#[payload]") final String query,
+            @RefOnly final PagingConfiguration pagingConfiguration) throws CookbookException {
+        Preconditions.checkNotNull(query);
+        logger.info("About to execute query '{}'", query);
+        try {
+            return new QueryPagingDelegate(query, pagingConfiguration);
+        } catch (Exception e) {
+            logger.error("Unable to execute query '{}'", query, e);
+            throw new CookbookException(e);
         }
-        return input;
+    }
+
+    /**
+     * Basic object mapper that converts any Cookbook entity to a Map.
+     *
+     * @param entity
+     *            provide an Ingredient or Recipe to be converted.
+     * @return Map containing key/value pairs of the Ingredient or Recipe Object.
+     */
+    @Transformer(sourceTypes = {
+            Ingredient.class,
+            Recipe.class })
+    public static Map<String, Object> transformToMap(final CookBookEntity entity) {
+        Preconditions.checkNotNull(entity);
+        return new ObjectMapper().convertValue(entity, new TypeReference<Map<String, Object>>() {
+        });
+    }
+
+    /**
+     * Auxiliary method to convert a Map entity parameters to a {@link CookBookEntity} object.
+     * <p>
+     *
+     * @param type
+     *            {@link EntityType}
+     * @param params
+     *            Map containing the parameters of the entity to be mapped.
+     * @return A {@link CookBookEntity} object.
+     * @throws CookbookException
+     *             If the {@link CookBookEntity} cannot be generated from the given parameters.
+     */
+    private CookBookEntity convertToCookBookEntity(@NotNull final EntityType type, @NotNull final Map<String, Object> params) throws CookbookException {
+        logger.info("Converting params {} to type {}...", params, type);
+        return new ObjectMapper().convertValue(params, EntityType.getClassFromType(type).getClass());
     }
 
 }
