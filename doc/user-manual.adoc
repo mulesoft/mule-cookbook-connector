@@ -56,7 +56,7 @@ To use the Cookbook connector, you must have the following:
 
 
 [[requirements]]
-== Hardware and Software Requirements
+=== Hardware and Software Requirements
 
 For hardware and software requirements, please visit the link:/mule-user-guide/v/3.8/hardware-and-software-requirements[Hardware and Software Requirements] page.
 
@@ -74,29 +74,6 @@ The connector requires the following dependencies:
 |Java|1.7 or higher
 |Cookbook SDK|1.0.0
 |===
-
-[[namespace-and-schema]]
-== Connector Namespace and Schema
-
-When designing your application in Studio, the act of dragging the connector from the palette onto the Anypoint Studio canvas should automatically populate the XML code with the connector *namespace* and *schema location*.
-
-[TIP]
-If you are manually coding the Mule application in Studio's XML editor or other text editor, paste these into the header of your *Configuration XML*, inside the `<mule>` tag.
-
-[source, xml,linenums]
-----
-<mule xmlns:cookbook="http://www.mulesoft.org/schema/mule/cookbook"
-  ...
-  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/cookbook
-                      http://www.mulesoft.org/schema/mule/cookbook/current/mule-cookbook.xsd">
-  ...
-  <flow name="yourFlow">
-    ...
-  </flow>
-</mule>
-----
-
-
 
 [[installing]]
 == Install the Cookbook Connector
@@ -121,24 +98,18 @@ image:cookbook_install_palette.png["Anypoint Studio palette - Cookbook Connector
 NOTE: Read more about link:/mule-user-guide/v/3.8/installing-connectors[Installing Connectors].
 
 
-[[mavenized-app]]
-== Using the Cookbook Connector in a Mavenized Mule App
+[[upgrading]]
+=== Upgrading to a Newer Cookbook Connector Version
 
-If you are coding a link:https://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven]-ized Mule application, this XML snippet must be included in your `pom.xml` file.
+If you currently use an older version of the connector, a small pop-up appears in the bottom right corner of Anypoint Studio with an *"Updates Available"* message.
 
-[TIP]
-Inside the `<version>` tags, put the desired version number, the word `RELEASE` for the latest release, or `SNAPSHOT` for the latest available version.
+. Click the pop-up and check for available updates. 
+. Click the connector version checkbox, click *Next* and follow the instructions provided by the user interface. 
+. *Restart* Studio when prompted. 
+. Now if you have several versions of the connector installed, you may be asked which version you would like to use. Choose the desired version when prompted.
 
-[source,xml,linenums]
-----
-<dependency>
-  <groupId>org.mule.modules</groupId>
-  <artifactId>mule-module-cookbook</artifactId>
-  <version></version>
-</dependency>
-----
-
-NOTE: The latest version of the Cookbook connector at time of writing, is 1.0.0.
+[NOTE]
+We recommend you keep Anypoint Studio updated to its latest version. 
 
 
 [[configuring]]
@@ -213,24 +184,54 @@ image:cookbook_oauth_global.png["Global Element Configuration"]
 NOTE: Read more about link:/mule-user-guide/v/3.8/testing-connections[Testing Connections].
 
 
-[[upgrading]]
-=== Upgrading to a Newer Cookbook Connector Version
+== Using the Connector
 
-If you currently use an older version of the connector, a small pop-up appears in the bottom right corner of Anypoint Studio with an *"Updates Available"* message.
+[[namespace-and-schema]]
+=== Connector Namespace and Schema
 
-. Click the pop-up and check for available updates. 
-. Click the connector version checkbox, click *Next* and follow the instructions provided by the user interface. 
-. *Restart* Studio when prompted. 
-. Now if you have several versions of the connector installed, you may be asked which version you would like to use. Choose the desired version when prompted.
+When designing your application in Studio, the act of dragging the connector from the palette onto the Anypoint Studio canvas should automatically populate the XML code with the connector *namespace* and *schema location*.
 
-[NOTE]
-We recommend you keep Anypoint Studio updated to its latest version. 
+[TIP]
+If you are manually coding the Mule application in Studio's XML editor or other text editor, paste these into the header of your *Configuration XML*, inside the `<mule>` tag.
+
+[source, xml,linenums]
+----
+<mule xmlns:cookbook="http://www.mulesoft.org/schema/mule/cookbook"
+  ...
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/cookbook
+                      http://www.mulesoft.org/schema/mule/cookbook/current/mule-cookbook.xsd">
+  ...
+  <flow name="yourFlow">
+    ...
+  </flow>
+</mule>
+----
+
+
+[[mavenized-app]]
+== Using the Cookbook Connector in a Mavenized Mule App
+
+If you are coding a link:https://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven]-ized Mule application, this XML snippet must be included in your `pom.xml` file.
+
+[TIP]
+Inside the `<version>` tags, put the desired version number, the word `RELEASE` for the latest release, or `SNAPSHOT` for the latest available version.
+
+[source,xml,linenums]
+----
+<dependency>
+  <groupId>org.mule.modules</groupId>
+  <artifactId>mule-module-cookbook</artifactId>
+  <version></version>
+</dependency>
+----
+
+NOTE: The latest version of the Cookbook connector at time of writing, is 1.0.0.
 
 
 [[using-connector]]
-== Cookbook Connector Operations
+=== Cookbook Connector Operations
 
-The Cookbook connector is an _operation-based_ connector, meaning you need to configure a specific operation for the connector to perform if you add it to a flow in a Mule application.
+The Cookbook connector is an _operation-based_ connector, meaning you need to configure a specific operation for the connector to perform if you add the connector to a flow in a Mule application.
 
 The connector supports the following list of operations:
 
