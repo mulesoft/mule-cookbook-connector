@@ -404,7 +404,7 @@ Inspect this link:https://github.com/mulesoft/cookbook-connector/blob/master/dem
 
 Update the *quantity* and *unit type* of an existing Ingredient.
 
-.Screenshot in Anypoint Studio 5.x UI and earlier - Studio 6 and above has new default look
+.Flow as seen in Anypoint Studio 5.x Default UI
 image:ck_example_flow.png[Example Update Flow]
 
 . Create a new *Mule Project* in Anypoint Studio.
