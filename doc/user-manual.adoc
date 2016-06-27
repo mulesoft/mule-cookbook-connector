@@ -117,13 +117,13 @@ We recommend you keep Anypoint Studio updated to its latest version. 
 
 Global elements for connectors are used for the purpose of storing important connection and other details.
 
-To use the Cookbook connector in your Mule application, you must define a *global element* that can be used by one or many Cookbook connectors instances in an application or shared domain for connector user authentication and subsequent authorized use.
+To use the Cookbook connector in your Mule application, you must define a *global element* that can be used by one or many Cookbook connector instances in an application or shared domain for connector user authentication and subsequent authorized use.
 
 TIP: Get familiar with link:/mule-fundamentals/v/3.8/global-elements[Global Elements].
 
 === Setting up Access to the Cookbook Service
 
-The Cookbook service can be accessed by these authentication types:
+The Cookbook service can be accessed via these two authentication mechanisms:
 
 * Simple configuration with a username and password that provides a token to send with each Cookbook service request (as part of the request).
 * link:http://oauth.net/2/[OAuth 2.0]
@@ -171,7 +171,7 @@ image:cookbook_oauth_global.png["Global Element Configuration"]
 3+|*OAuth Tab*
 |`Domain`| The domain for return of the call after OAuth dance.| **localhost**
 |`Local Port`| The port for the callback.| **8081**
-|`Remort Port`| The port for the callback.| **8081**
+|`Remote Port`| The port for the callback.| **8081**
 |`Path`| The path for the callback.| **callback**
 |===
 
@@ -192,7 +192,7 @@ NOTE: Read more about link:/mule-user-guide/v/3.8/testing-connections[Testing Co
 When designing your application in Studio, the act of dragging the connector from the palette onto the Anypoint Studio canvas should automatically populate the XML code with the connector *namespace* and *schema location*.
 
 [TIP]
-If you are manually coding the Mule application in Studio's XML editor or other text editor, paste these into the header of your *Configuration XML*, inside the `<mule>` tag.
+If you are manually coding the Mule application in Studio's XML editor or other text editor, your `<mule>` block should include the namespace and schema location. See example:
 
 [source, xml,linenums]
 ----
@@ -206,26 +206,6 @@ If you are manually coding the Mule application in Studio's XML editor or other 
   </flow>
 </mule>
 ----
-
-
-[[mavenized-app]]
-== Using the Cookbook Connector in a Mavenized Mule App
-
-If you are coding a link:https://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven]-ized Mule application, this XML snippet must be included in your `pom.xml` file.
-
-[TIP]
-Inside the `<version>` tags, put the desired version number, the word `RELEASE` for the latest release, or `SNAPSHOT` for the latest available version.
-
-[source,xml,linenums]
-----
-<dependency>
-  <groupId>org.mule.modules</groupId>
-  <artifactId>mule-module-cookbook</artifactId>
-  <version></version>
-</dependency>
-----
-
-NOTE: The latest version of the Cookbook connector at time of writing, is 1.0.0.
 
 
 [[using-connector]]
@@ -365,6 +345,26 @@ Typical *CQL queries* accept the following:
 * `GET ALL FROM RECIPE MATCHING id contains 1`
 ////
 
+
+[[mavenized-app]]
+== Using the Cookbook Connector in a Mavenized Mule App
+
+If you are coding a link:https://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven]-ized Mule application, this XML snippet must be included in your `pom.xml` file.
+
+[TIP]
+Inside the `<version>` tags, put the desired version number, the word `RELEASE` for the latest release, or `SNAPSHOT` for the latest available version.
+
+[source,xml,linenums]
+----
+<dependency>
+  <groupId>org.mule.modules</groupId>
+  <artifactId>mule-module-cookbook</artifactId>
+  <version>1.0.0</version>
+</dependency>
+----
+
+NOTE: The latest version of the Cookbook connector at time of writing, is 1.0.0.
+
 [[connection-pool]]
 == Managing the Connection Pool
 
@@ -399,9 +399,9 @@ Test out the operations inside a helpful user interface, available to you after 
 image:user-manual-722cf.png[CRUD html interface]
 
 [NOTE]
-Inspect this link:https://github.com/mulesoft/cookbook-connector/blob/master/demo/demo-crud-ingredient/src/main/app/demo-crud-ingredient.xml[demo Mule application] corresponding XML to learn how the *HTTP listener*, *Cookbook connector* and other components are used to manage the cookbook service calls and passage of data through the Mule application.
+Inspect this link:https://github.com/mulesoft/cookbook-connector/blob/master/demo/demo-crud-ingredient/src/main/app/demo-crud-ingredient.xml[demo Mule application and its corresponding XML] to learn how the HTTP listener, Cookbook connector and supporting elements are defined and ordered in the app.
 
-=== Using the Update Operation
+=== Get Ingredient from the Cookbook and Perform Update
 
 Update the *quantity* and *unit type* of an existing Ingredient.
 
@@ -463,7 +463,7 @@ The XML should look similar to this snippet:
 |Level|INFO
 |===
 +
-. Add a *Transform Message* component to leverage the flexible transformative capability of DataWeave. By the agility of DataSense, you are presented with a list of possible fields to use, as available to your Cookbook instance.
+. Add a *Transform Message* component to leverage the flexible transformative capability of DataWeave. DataSense enables application design time presentation of a list of possible fields to use, as available to your Cookbook connector or other data transformers.
 +
 ```xml
 %dw 1.0
@@ -508,7 +508,7 @@ The XML should look similar to this snippet:
 |Level|INFO
 |===
 
-. Add a *Object to JSON* transformer to display the response in the browser.
+. Add an *Object to JSON* transformer to display the response in the browser.
 +
 NOTE: You can use any transformer you want, such as *Object to XML*, for example.
 
