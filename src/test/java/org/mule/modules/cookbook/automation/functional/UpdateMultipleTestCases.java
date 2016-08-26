@@ -41,7 +41,7 @@ public class UpdateMultipleTestCases extends AbstractTestCases {
 
     @Test
     public void testUpdateMultipleIngredients() throws CookbookException {
-        // modify ingredients fields
+        // Modify ingredients fields
         List<CookBookEntity> transformedEntities = Lists.newArrayList(Iterables.transform(createdEntities, new Function<CookBookEntity, CookBookEntity>() {
 
             @Override
@@ -58,10 +58,10 @@ public class UpdateMultipleTestCases extends AbstractTestCases {
             }
         }));
 
-        // update
+        // Update
         List<CookBookEntity> updatedEntities = getConnector().updateMultiple(Lists.newArrayList(transformedEntities));
 
-        // fetch single ingredient
+        // Fetch single ingredient
         Ingredient charqui = (Ingredient) Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {
 
             @Override
@@ -72,7 +72,7 @@ public class UpdateMultipleTestCases extends AbstractTestCases {
         assertThat(charqui.getQuantity(), is(new Double("500.0")));
         assertThat(charqui.getUnit(), is(UnitType.GRAMS));
 
-        // fetch single ingredient
+        // Fetch single ingredient
         Ingredient miso = (Ingredient) Iterables.find(updatedEntities, new Predicate<CookBookEntity>() {
 
             @Override
