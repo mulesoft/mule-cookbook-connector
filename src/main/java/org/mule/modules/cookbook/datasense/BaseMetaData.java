@@ -106,7 +106,6 @@ public class BaseMetaData {
     }
 
     public MetaData createInputMetadata(@NotNull final MetaDataKey key, final String[] excludedFields) throws Exception {
-
         final Description description = connector.describeEntity(key.getId());
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getId());

@@ -20,7 +20,7 @@ import org.mule.api.annotations.oauth.OAuthConsumerSecret;
 import org.mule.api.annotations.oauth.OAuthPostAuthorization;
 
 /**
- * Authenticates against the service using OAuth 2.0 protocol
+ * Authenticates against the service using the OAuth 2.0 protocol.
  *
  * @author MuleSoft, Inc.
  */
@@ -34,14 +34,14 @@ public class OAuth2Config extends AbstractConfig {
     private String accessToken;
 
     /**
-     * Your application's client identifier - OAuth consumer key
+     * Your application's client identifier - OAuth consumer key.
      */
     @Configurable
     @OAuthConsumerKey
     private String consumerKey;
 
     /**
-     * Your application's client secret - OAuth consumer secret
+     * Your application's client secret - OAuth consumer secret.
      */
     @Configurable
     @OAuthConsumerSecret

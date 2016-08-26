@@ -23,7 +23,7 @@ public enum EntityType {
         return EnumUtils.getEnumFromString(EntityType.class, string);
     }
 
-    public static CookBookEntity getClassFromType(@NotNull EntityType type) throws CookbookException {
+    public static CookBookEntity getClassFromType(@NotNull final EntityType type) throws CookbookException {
         try {
             return (CookBookEntity) Class.forName("com.cookbook.tutorial.service." + type.displayName).newInstance();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {

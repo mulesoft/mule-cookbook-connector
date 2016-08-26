@@ -19,7 +19,7 @@ import java.util.List;
 public class CreateMetaData extends BaseMetaData {
 
     /**
-     * Retrieves the list of keys
+     * Retrieves the list of keys.
      */
     @MetaDataKeyRetriever
     public List<MetaDataKey> getMetaDataKeys() throws Exception {
@@ -27,13 +27,13 @@ public class CreateMetaData extends BaseMetaData {
     }
 
     /**
-     * Get MetaData given the Key the user selects
+     * Retrieves the {@link MetaData} model for the key the user selects.
      *
      * @param key
-     *            The key selected from the list of valid keys
-     * @return The MetaData model of that corresponds to the key
+     *            The key selected from the list of valid keys.
+     * @return The {@link MetaData} model associated to the key.
      * @throws Exception
-     *             If anything fails
+     *             If there are errors in the retrieval.
      */
     @MetaDataRetriever
     public MetaData getMetaData(@NotNull final MetaDataKey key) throws Exception {

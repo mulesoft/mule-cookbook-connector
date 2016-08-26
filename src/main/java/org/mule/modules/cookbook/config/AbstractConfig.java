@@ -11,7 +11,7 @@ import org.mule.api.annotations.param.Default;
 import com.cookbook.tutorial.client.MuleCookBookClient;
 
 /**
- * Configuration type Config
+ * Configuration type Config.
  *
  * @author MuleSoft, Inc.
  */

@@ -99,7 +99,7 @@ public class CookbookConnector {
     }
 
     /**
-     * Allows de caller to create multiple new Ingredients and/or Recipes in a single execution.
+     * Allows the caller to create multiple new Ingredients and/or Recipes in a single execution.
      * <p>
      *
      * @param entities

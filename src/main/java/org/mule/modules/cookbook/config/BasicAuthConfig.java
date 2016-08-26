@@ -20,7 +20,7 @@ import com.cookbook.tutorial.client.MuleCookBookClient;
 import com.cookbook.tutorial.service.InvalidCredentialsException;
 
 /**
- * Connection Management handles login/logout for the user as well as reconnection's.
+ * This class handles the user's login/logout as well as the reconnections.
  *
  * @author MuleSoft, Inc.
  */
@@ -28,10 +28,10 @@ import com.cookbook.tutorial.service.InvalidCredentialsException;
 public class BasicAuthConfig extends AbstractConfig {
 
     /**
-     * Connect
+     * Connect.
      *
-     * @param username A username
-     * @param password A password
+     * @param username A username.
+     * @param password A password.
      * @throws ConnectionException
      */
     @Connect
@@ -46,7 +46,7 @@ public class BasicAuthConfig extends AbstractConfig {
     }
 
     /**
-     * Disconnect
+     * Disconnect.
      */
     @Disconnect
     public void disconnect() {
@@ -54,7 +54,7 @@ public class BasicAuthConfig extends AbstractConfig {
     }
 
     /**
-     * Are we connected
+     * Returns the status of the connection.
      */
     @ValidateConnection
     public boolean isConnected() {
