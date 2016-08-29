@@ -26,7 +26,7 @@ public class GetRecentlyAddedSourceTestCases extends AbstractTestCases {
     public void setUp() throws Throwable {
         getDispatcher().initializeSource("getRecentlyAddedSource", new Object[] { null });
         getConnector().create(EntityType.RECIPE.name(), TestDataBuilder.getRecentlyAddedRecipeData());
-        // gives time to the source to fetch the created entity
+        // Gives time to the source to fetch the created entity
         Thread.sleep(3000);
     }
 

@@ -6,7 +6,6 @@
 package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
 import org.junit.After;

@@ -73,7 +73,7 @@ public class OAuth2ConfigTestCases {
             config.testConnect();
             fail();
         } catch (ConnectionException e) {
-            // the cause of the Exception or RuntimeException
+            // The cause of the Exception or RuntimeException
             assertThat(e.getCause().getCause(), instanceOf(InvalidTokenException.class));
         }
     }

@@ -21,7 +21,7 @@ public class QueryPagingDelegate extends ProviderAwarePagingDelegate<CookBookEnt
     private final Integer pageSize;
     private Integer currentPage = 0;
 
-    public QueryPagingDelegate(String query, final PagingConfiguration pagingConfiguration) {
+    public QueryPagingDelegate(final String query, final PagingConfiguration pagingConfiguration) {
         super();
         this.query = query;
         this.pageSize = pagingConfiguration.getFetchSize();
@@ -32,10 +32,10 @@ public class QueryPagingDelegate extends ProviderAwarePagingDelegate<CookBookEnt
     }
 
     /**
-     * Returns the next page of items. If the return value is <code>null</code> or an empty list, then it means no more items are available
+     * Returns the next page of items. If the return value is <code>null</code> or an empty list, then it means no more items are available.
      *
      * @param provider
-     *            The provider to be used to do the query. You can assume this provider is already properly initialised
+     *            The provider to be used to do the query. You can assume this provider is already properly initialised.
      * @return a populated list of elements. Returning <code>null</code> or an empty list, means no more items are available.
      * @throws Exception
      */
@@ -56,7 +56,7 @@ public class QueryPagingDelegate extends ProviderAwarePagingDelegate<CookBookEnt
      * In some scenarios, it might not be possible/convenient to actually retrieve this value. -1 is returned in such a case.
      *
      * @param provider
-     *            The provider to be used to do the query. You can assume this provider is already properly initialised
+     *            The provider to be used to do the query. You can assume this provider is already properly initialised.
      */
     @Override
     public int getTotalResults(final CookbookConnector provider) throws Exception {
