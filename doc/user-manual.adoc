@@ -11,7 +11,7 @@ Use this Cookbook connector user guide and our examples to get started with Mule
 [NOTE]
 ====
 The *Cookbook Connector* is used to connect to the link:#cookbook-api[Cookbook Service].
-View the release ntoes link:/release-notes/cookbook-connector-release-notes[here].
+View the release notes link:/release-notes/cookbook-connector-release-notes[here].
 
 To dive into developing a Mule-compatible connector like Cookbook connector right away, see the link:https://docs.mulesoft.com/anypoint-connector-devkit/v/3.8/devkit-tutorial[Anypoint Connector DevKit Tutorial].
 ====
