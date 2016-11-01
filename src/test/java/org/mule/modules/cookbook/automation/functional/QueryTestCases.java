@@ -39,7 +39,8 @@ public class QueryTestCases extends AbstractTestCases {
                     new PagingConfiguration(10) });
             fail();
         } catch (Throwable e) {
-            assertThat(e.getCause(), instanceOf(InvalidRequestException.class));
+            assertThat(e.getCause().getCause(), instanceOf(InvalidRequestException.class));
         }
     }
+
 }
