@@ -7,13 +7,13 @@ package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.NoSuchEntityException;
-import static com.google.common.collect.Lists.newArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.exception.CookbookException;
 
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;

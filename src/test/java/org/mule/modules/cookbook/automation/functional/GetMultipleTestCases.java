@@ -7,7 +7,6 @@ package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.google.common.collect.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
