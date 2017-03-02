@@ -7,14 +7,14 @@ package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.exception.CookbookException;
 
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.transform;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.fail;
@@ -26,7 +26,7 @@ public class DeleteMultipleTestCases extends AbstractTestCases {
     @Before
     public void setUp() throws CookbookException {
         List<CookBookEntity> createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
-        entityIds = Lists.transform(createdEntities, ENTITY_IDS_FUNCTION);
+        entityIds = newArrayList(transform(createdEntities, ENTITY_IDS_FUNCTION));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class DeleteMultipleTestCases extends AbstractTestCases {
     @Test
     public void testDeleteMultipleIngredientsNotFound() throws CookbookException {
         try {
-            List<Integer> copyOfIds = Lists.newArrayList(entityIds);
+            List<Integer> copyOfIds = newArrayList(entityIds);
             copyOfIds.add(-1);
             getConnector().deleteMultiple(copyOfIds);
             fail();

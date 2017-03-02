@@ -10,10 +10,13 @@ import com.cookbook.tutorial.service.InvalidRequestException;
 import com.google.common.collect.Iterables;
 import org.junit.Test;
 import org.mule.streaming.PagingConfiguration;
+import org.mule.tools.devkit.ctf.configuration.DeploymentProfiles;
+import org.mule.tools.devkit.ctf.junit.RunOnlyOn;
 import org.mule.util.CollectionUtils;
 
 import java.util.Collection;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -22,6 +25,8 @@ import static org.junit.Assert.fail;
 
 public class QueryTestCases extends AbstractTestCases {
 
+    //This is due to CTF not being able to serialize/deserialize XMLGregorianCalendarImpl
+    @RunOnlyOn(profiles = DeploymentProfiles.embedded)
     @Test
     public void testQueryIngredients() throws Throwable {
         final Collection<CookBookEntity> entities = (Collection<CookBookEntity>) getDispatcher().runPaginatedMethod("query", new Object[] {
@@ -39,7 +44,7 @@ public class QueryTestCases extends AbstractTestCases {
                     new PagingConfiguration(10) });
             fail();
         } catch (Throwable e) {
-            assertThat(e.getCause().getCause(), instanceOf(InvalidRequestException.class));
+            assertThat(getRootCause(e), instanceOf(InvalidRequestException.class));
         }
     }
 

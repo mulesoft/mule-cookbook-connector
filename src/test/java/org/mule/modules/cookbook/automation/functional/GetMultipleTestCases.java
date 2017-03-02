@@ -7,7 +7,6 @@ package org.mule.modules.cookbook.automation.functional;
 
 import com.cookbook.tutorial.service.CookBookEntity;
 import com.cookbook.tutorial.service.NoSuchEntityException;
-import com.google.common.collect.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +15,8 @@ import org.mule.modules.cookbook.exception.CookbookException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.transform;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -29,7 +30,7 @@ public class GetMultipleTestCases extends AbstractTestCases {
     @Before
     public void setUp() throws CookbookException {
         createdEntities = getConnector().createMultiple(TestDataBuilder.createMultipleEntitiesData());
-        entityIds = Lists.transform(createdEntities, ENTITY_IDS_FUNCTION);
+        entityIds = newArrayList(transform(createdEntities, ENTITY_IDS_FUNCTION));
     }
 
     @After
