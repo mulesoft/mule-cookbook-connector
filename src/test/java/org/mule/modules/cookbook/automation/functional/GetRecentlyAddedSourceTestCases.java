@@ -11,6 +11,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.modules.cookbook.utils.EntityType;
+import org.mule.tools.devkit.ctf.configuration.DeploymentProfiles;
+import org.mule.tools.devkit.ctf.junit.RunOnlyOn;
 
 import java.util.List;
 
@@ -36,6 +38,8 @@ public class GetRecentlyAddedSourceTestCases extends AbstractTestCases {
         getDispatcher().shutDownSource("getRecentlyAddedSource");
     }
 
+    //This is due to CTF not being able to serialize/deserialize XMLGregorianCalendarImpl
+    @RunOnlyOn(profiles = DeploymentProfiles.embedded)
     @Test
     public void testGetRecentlyAddedSource() {
         List<Object> sources = getDispatcher().getSourceMessages("getRecentlyAddedSource");
